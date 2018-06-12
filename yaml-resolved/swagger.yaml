@@ -1,0 +1,193 @@
+---
+swagger: "2.0"
+info:
+  description: defaultDescription
+  version: "0.1"
+  title: defaultTitle
+paths:
+  /data/2.5/weather:
+    get:
+      consumes:
+      - text/plain
+      produces:
+      - application/json
+      parameters:
+      - name: q
+        in: query
+        required: false
+        type: string
+        x-example: London
+      - name: APPID
+        in: query
+        required: false
+        type: string
+        x-example: 3d4608bf75717da40d0d10e499367847
+      responses:
+        200:
+          description: Definition generated from Swagger Inspector
+          schema:
+            $ref: '#/definitions/Model0'
+definitions:
+  Weather:
+    properties:
+      id:
+        type: integer
+        format: int32
+      main:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+    example:
+      icon: icon
+      description: description
+      main: main
+      id: 1
+  Coord:
+    properties:
+      lon:
+        type: number
+        format: double
+      lat:
+        type: number
+        format: double
+    example:
+      lon: 0.8008281904610115
+      lat: 6.027456183070403
+  Wind:
+    properties:
+      speed:
+        type: number
+        format: double
+      deg:
+        type: integer
+        format: int32
+    example:
+      deg: 4
+      speed: 2.027123023002322
+  Clouds:
+    properties:
+      all:
+        type: integer
+        format: int32
+    example:
+      all: 7
+  Model0:
+    properties:
+      coord:
+        $ref: '#/definitions/Coord'
+      weather:
+        type: array
+        items:
+          $ref: '#/definitions/Weather'
+      base:
+        type: string
+      main:
+        $ref: '#/definitions/Main'
+      visibility:
+        type: integer
+        format: int32
+      wind:
+        $ref: '#/definitions/Wind'
+      clouds:
+        $ref: '#/definitions/Clouds'
+      dt:
+        type: integer
+        format: int32
+      sys:
+        $ref: '#/definitions/Sys'
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
+      cod:
+        type: integer
+        format: int32
+    example:
+      dt: 1
+      coord:
+        lon: 0.8008281904610115
+        lat: 6.027456183070403
+      visibility: 3
+      weather:
+      - icon: icon
+        description: description
+        main: main
+        id: 1
+      - icon: icon
+        description: description
+        main: main
+        id: 1
+      name: name
+      cod: 5
+      main:
+        temp: 5.962133916683182
+        temp_min: 7.061401241503109
+        humidity: 2
+        pressure: 5
+        temp_max: 9.301444243932576
+      clouds:
+        all: 7
+      id: 4
+      sys:
+        country: country
+        sunrise: 7
+        sunset: 1
+        id: 1
+        type: 1
+        message: 6.84685269835264
+      base: base
+      wind:
+        deg: 4
+        speed: 2.027123023002322
+  Sys:
+    properties:
+      type:
+        type: integer
+        format: int32
+      id:
+        type: integer
+        format: int32
+      message:
+        type: number
+        format: double
+      country:
+        type: string
+      sunrise:
+        type: integer
+        format: int32
+      sunset:
+        type: integer
+        format: int32
+    example:
+      country: country
+      sunrise: 7
+      sunset: 1
+      id: 1
+      type: 1
+      message: 6.84685269835264
+  Main:
+    properties:
+      temp:
+        type: number
+        format: double
+      pressure:
+        type: integer
+        format: int32
+      humidity:
+        type: integer
+        format: int32
+      temp_min:
+        type: number
+        format: double
+      temp_max:
+        type: number
+        format: double
+    example:
+      temp: 5.962133916683182
+      temp_min: 7.061401241503109
+      humidity: 2
+      pressure: 5
+      temp_max: 9.301444243932576
