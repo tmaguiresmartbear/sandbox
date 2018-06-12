@@ -12,7 +12,7 @@
 /**
  * Open weather
  *
- * This is my descriptiongggg
+ * This is my descriptiongggssg
  *
  * OpenAPI spec version: 0.1
  * 
