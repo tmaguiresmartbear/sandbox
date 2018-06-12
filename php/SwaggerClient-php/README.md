@@ -65,10 +65,10 @@ $q = "q_example"; // string |
 $appid = "appid_example"; // string | 
 
 try {
-    $result = $apiInstance->data25WeatherGet($q, $appid);
+    $result = $apiInstance->data25Weather1Get($q, $appid);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling DefaultApi->data25WeatherGet: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling DefaultApi->data25Weather1Get: ', $e->getMessage(), PHP_EOL;
 }
 
 ?>
@@ -80,7 +80,7 @@ All URIs are relative to *https://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*DefaultApi* | [**data25WeatherGet**](docs/Api/DefaultApi.md#data25weatherget) | **GET** /data/2.5/weather | 
+*DefaultApi* | [**data25Weather1Get**](docs/Api/DefaultApi.md#data25weather1get) | **GET** /data/2.5/weather1 | 
 
 
 ## Documentation For Models

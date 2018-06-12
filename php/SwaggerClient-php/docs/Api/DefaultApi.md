@@ -4,11 +4,11 @@ All URIs are relative to *https://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**data25WeatherGet**](DefaultApi.md#data25WeatherGet) | **GET** /data/2.5/weather | 
+[**data25Weather1Get**](DefaultApi.md#data25Weather1Get) | **GET** /data/2.5/weather1 | 
 
 
-# **data25WeatherGet**
-> \Swagger\Client\Model\Model0 data25WeatherGet($q, $appid)
+# **data25Weather1Get**
+> \Swagger\Client\Model\Model0 data25Weather1Get($q, $appid)
 
 
 
@@ -26,10 +26,10 @@ $q = "q_example"; // string |
 $appid = "appid_example"; // string | 
 
 try {
-    $result = $apiInstance->data25WeatherGet($q, $appid);
+    $result = $apiInstance->data25Weather1Get($q, $appid);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling DefaultApi->data25WeatherGet: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling DefaultApi->data25Weather1Get: ', $e->getMessage(), PHP_EOL;
 }
 ?>
 ```

@@ -73,12 +73,12 @@ class DefaultApiTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test case for data25WeatherGet
+     * Test case for data25Weather1Get
      *
      * .
      *
      */
-    public function testData25WeatherGet()
+    public function testData25Weather1Get()
     {
     }
 }
