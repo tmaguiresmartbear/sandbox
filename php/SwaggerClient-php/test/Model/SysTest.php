@@ -12,9 +12,9 @@
  */
 
 /**
- * defaultTitle
+ * Open weather
  *
- * defaultDescription with a change
+ * This is my description
  *
  * OpenAPI spec version: 0.1
  * 
