@@ -13,7 +13,7 @@
 /**
  * Open weather
  *
- * This is my description
+ * This is my descriptiongggg
  *
  * OpenAPI spec version: 0.1
  * 
@@ -84,7 +84,7 @@ class DefaultApi
     }
 
     /**
-     * Operation data25Weather1Get
+     * Operation data25WeatherGet
      *
      * @param  string $q q (optional)
      * @param  string $appid appid (optional)
@@ -93,14 +93,14 @@ class DefaultApi
      * @throws \InvalidArgumentException
      * @return \Swagger\Client\Model\Model0
      */
-    public function data25Weather1Get($q = null, $appid = null)
+    public function data25WeatherGet($q = null, $appid = null)
     {
-        list($response) = $this->data25Weather1GetWithHttpInfo($q, $appid);
+        list($response) = $this->data25WeatherGetWithHttpInfo($q, $appid);
         return $response;
     }
 
     /**
-     * Operation data25Weather1GetWithHttpInfo
+     * Operation data25WeatherGetWithHttpInfo
      *
      * @param  string $q (optional)
      * @param  string $appid (optional)
@@ -109,10 +109,10 @@ class DefaultApi
      * @throws \InvalidArgumentException
      * @return array of \Swagger\Client\Model\Model0, HTTP status code, HTTP response headers (array of strings)
      */
-    public function data25Weather1GetWithHttpInfo($q = null, $appid = null)
+    public function data25WeatherGetWithHttpInfo($q = null, $appid = null)
     {
         $returnType = '\Swagger\Client\Model\Model0';
-        $request = $this->data25Weather1GetRequest($q, $appid);
+        $request = $this->data25WeatherGetRequest($q, $appid);
 
         try {
             $options = $this->createHttpClientOption();
@@ -174,7 +174,7 @@ class DefaultApi
     }
 
     /**
-     * Operation data25Weather1GetAsync
+     * Operation data25WeatherGetAsync
      *
      * 
      *
@@ -184,9 +184,9 @@ class DefaultApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function data25Weather1GetAsync($q = null, $appid = null)
+    public function data25WeatherGetAsync($q = null, $appid = null)
     {
-        return $this->data25Weather1GetAsyncWithHttpInfo($q, $appid)
+        return $this->data25WeatherGetAsyncWithHttpInfo($q, $appid)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -195,7 +195,7 @@ class DefaultApi
     }
 
     /**
-     * Operation data25Weather1GetAsyncWithHttpInfo
+     * Operation data25WeatherGetAsyncWithHttpInfo
      *
      * 
      *
@@ -205,10 +205,10 @@ class DefaultApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function data25Weather1GetAsyncWithHttpInfo($q = null, $appid = null)
+    public function data25WeatherGetAsyncWithHttpInfo($q = null, $appid = null)
     {
         $returnType = '\Swagger\Client\Model\Model0';
-        $request = $this->data25Weather1GetRequest($q, $appid);
+        $request = $this->data25WeatherGetRequest($q, $appid);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -248,7 +248,7 @@ class DefaultApi
     }
 
     /**
-     * Create request for operation 'data25Weather1Get'
+     * Create request for operation 'data25WeatherGet'
      *
      * @param  string $q (optional)
      * @param  string $appid (optional)
@@ -256,10 +256,10 @@ class DefaultApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function data25Weather1GetRequest($q = null, $appid = null)
+    protected function data25WeatherGetRequest($q = null, $appid = null)
     {
 
-        $resourcePath = '/data/2.5/weather1';
+        $resourcePath = '/data/2.5/weather';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];

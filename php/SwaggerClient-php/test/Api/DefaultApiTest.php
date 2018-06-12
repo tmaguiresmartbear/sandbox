@@ -13,7 +13,7 @@
 /**
  * Open weather
  *
- * This is my description
+ * This is my descriptiongggg
  *
  * OpenAPI spec version: 0.1
  * 
@@ -73,12 +73,12 @@ class DefaultApiTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test case for data25Weather1Get
+     * Test case for data25WeatherGet
      *
      * .
      *
      */
-    public function testData25Weather1Get()
+    public function testData25WeatherGet()
     {
     }
 }
