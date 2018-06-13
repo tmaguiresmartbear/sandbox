@@ -1,8 +1,8 @@
 swagger: '2.0'
 info:
   version: '1.0'
-  title: "tim71"
-  description: Polls is a simple API allowing consumers to view polls and vote in them a change from GitHub
+  title: "Polls API"
+  description: Polls is a simple API allowing consumers to view polls and vote in them a change from GitHub, check for auto refresh
   license:
     name: MIT
     url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
