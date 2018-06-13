@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  description: defaultDescription with a change
+  description: defaultDescription with a change change in github
   version: "0.1"
   title: defaultTitle
 paths:
