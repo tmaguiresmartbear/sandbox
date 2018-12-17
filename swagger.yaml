@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   version: '1.0'
-  title: "Polls API Version 2 some upate"
+  title: "Polls API Version 2 some upate more updates in github"
   description: Polls is a simple API allowing consumers to view polls and vote in them a change from GitHub, check for auto refresh
   license:
     name: MIT
