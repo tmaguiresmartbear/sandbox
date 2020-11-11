@@ -1,7 +1,8 @@
 swagger: '2.0'
 info:
   description: |
-    TIM i edited your spec!!! dfdff
+    TIM i edited your spec!!! 
+    More updates
     update from swaggerhub any updates you make will show up here. This is a sample Petstore server.  You can find
     out more about Swagger at
     [http://swagger.io](http://swagger.io) or on
