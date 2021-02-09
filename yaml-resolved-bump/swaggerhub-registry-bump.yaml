@@ -1,0 +1,4345 @@
+---
+swagger: "2.0"
+info:
+  description: "# Introduction\nThis is the registry API for SwaggerHub. It allows you to access, manage, and update your APIs and Domains in SwaggerHub bypassing the web interface.\n# Authentication\nUse your personal API Key: you can find it by visiting the [API Key page](https://app.swaggerhub.com/settings/apiKey).\n# Tools\nIn addition to calling the Registry API directly, you can use these tools to interact with the API from the command line or CI/CD pipeline:\n\n * [SwaggerHub CLI](https://www.npmjs.com/package/swaggerhub-cli) \n * [Maven plugin](https://github.com/swagger-api/swaggerhub-maven-plugin)\n * [Gradle plugin](https://github.com/swagger-api/swaggerhub-gradle-plugin)\n"
+  version: 1.0.59
+  title: SwaggerHub Registry API
+  contact:
+    name: SwaggerHub
+    url: https://swaggerhub.com
+    email: info@swaggerhub.com
+host: api.swaggerhub.com
+tags:
+- name: APIs
+  description: Manage your API definitions
+- name: Domains
+  description: Manage your [domains](https://app.swaggerhub.com/help/domains/index)
+- name: Projects
+  description: Manage your organization's [projects](https://app.swaggerhub.com/help/organizations/projects/index)
+- name: Integrations
+  description: Create and configure [integrations](https://app.swaggerhub.com/help/integrations/index) programmatically
+schemes:
+- https
+produces:
+- application/json
+paths:
+  /specs:
+    get:
+      tags:
+      - APIs
+      - Domains
+      summary: Search APIs and domains
+      operationId: searchApisAndDomains
+      parameters:
+      - name: specType
+        in: query
+        description: |
+          Type of definitions to search:
+          * API - APIs only
+          * DOMAIN - Domains only
+          * ANY - Both APIs and domains
+        required: false
+        type: string
+        default: ANY
+        enum:
+        - API
+        - DOMAIN
+        - ANY
+      - name: visibility
+        in: query
+        description: |
+          The visibility of a definition in SwaggerHub:
+          * PUBLIC - can be viewed by anyone
+          * PRIVATE - can only be viewed by you or your organization and those that you are collaborating with or have shared it with
+          * ANY - either PUBLIC or PRIVATE
+        required: false
+        type: string
+        default: ANY
+        enum:
+        - PUBLIC
+        - PRIVATE
+        - ANY
+      - name: state
+        in: query
+        description: |
+          Matches against published state of the spec:
+          * UNPUBLISHED - spec is a draft, a work in progress
+          * PUBLISHED - spec is a stable version ready for consuming from client applications
+          * ANY - either PUBLISHED or UNPUBLISHED
+        required: false
+        type: string
+        default: ALL
+        enum:
+        - ALL
+        - PUBLISHED
+        - UNPUBLISHED
+      - name: owner
+        in: query
+        description: API or domain owner. Can be username or organization name. Case-sensitive.
+        required: false
+        type: string
+      - name: query
+        in: query
+        description: Free text query to match
+        required: false
+        type: string
+      - name: page
+        in: query
+        description: Page to return
+        required: false
+        type: integer
+        default: 0
+        format: int32
+      - name: limit
+        in: query
+        description: Number of results per page (1 .. 100)
+        required: false
+        type: integer
+        default: 10
+        maximum: 100
+        format: int32
+      - name: sort
+        in: query
+        description: |
+          Sort criteria of result set:
+          * NAME
+          * UPDATED
+          * CREATED
+          * OWNER
+          * BEST_MATCH - by relevance
+          * TITLE - by `info.title`
+        required: false
+        type: string
+        default: NAME
+        enum:
+        - NAME
+        - UPDATED
+        - CREATED
+        - OWNER
+        - BEST_MATCH
+        - TITLE
+      - name: order
+        in: query
+        description: Sort order
+        required: false
+        type: string
+        default: ASC
+        enum:
+        - ASC
+        - DESC
+      responses:
+        "200":
+          description: A list of APIs and domains in APIs.json format
+          schema:
+            $ref: '#/definitions/ApisJson'
+      security:
+      - TokenSecured: []
+      - {}
+  /apis:
+    get:
+      tags:
+      - APIs
+      summary: Search APIs
+      description: This is a convenience alias for `GET /specs?specType=API`.
+      operationId: searchApis
+      parameters:
+      - name: query
+        in: query
+        description: Free text query to match
+        required: false
+        type: string
+      - name: state
+        in: query
+        description: |
+          Matches against published state of the spec:
+          * UNPUBLISHED - spec is a draft, a work in progress
+          * PUBLISHED - spec is a stable version ready for consuming from client applications
+          * ANY - either PUBLISHED or UNPUBLISHED
+        required: false
+        type: string
+        default: ALL
+        enum:
+        - ALL
+        - PUBLISHED
+        - UNPUBLISHED
+      - name: page
+        in: query
+        description: Page to return
+        required: false
+        type: integer
+        default: 0
+        format: int32
+      - name: limit
+        in: query
+        description: Number of results per page (1 .. 100)
+        required: false
+        type: integer
+        default: 10
+        maximum: 100
+        format: int32
+      - name: sort
+        in: query
+        description: |
+          Sort criteria of result set:
+          * NAME
+          * UPDATED
+          * CREATED
+          * OWNER
+          * BEST_MATCH - by relevance
+          * TITLE - by `info.title`
+        required: false
+        type: string
+        default: NAME
+        enum:
+        - NAME
+        - UPDATED
+        - CREATED
+        - OWNER
+        - BEST_MATCH
+        - TITLE
+      - name: order
+        in: query
+        description: Sort order
+        required: false
+        type: string
+        default: ASC
+        enum:
+        - ASC
+        - DESC
+      responses:
+        "303":
+          description: Redirect to `GET /specs`, with all query parameters preserved
+          headers:
+            Location:
+              type: string
+      security:
+      - TokenSecured: []
+      - {}
+  /apis/{owner}:
+    get:
+      tags:
+      - APIs
+      summary: Get a list of APIs of the specified owner
+      operationId: getOwnerApis
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: page
+        in: query
+        description: Page to return
+        required: false
+        type: integer
+        default: 0
+        format: int32
+      - name: limit
+        in: query
+        description: Number of results per page (1 .. 100)
+        required: false
+        type: integer
+        default: 10
+        maximum: 100
+        format: int32
+      - name: sort
+        in: query
+        description: |
+          Sort criteria of result set:
+          * NAME
+          * UPDATED
+          * CREATED
+          * OWNER
+          * BEST_MATCH - by relevance
+          * TITLE - by `info.title`
+        required: false
+        type: string
+        default: NAME
+        enum:
+        - NAME
+        - UPDATED
+        - CREATED
+        - OWNER
+        - BEST_MATCH
+        - TITLE
+      - name: order
+        in: query
+        description: Sort order
+        required: false
+        type: string
+        default: ASC
+        enum:
+        - ASC
+        - DESC
+      responses:
+        "200":
+          description: A list of APIs in APIs.json format
+          schema:
+            $ref: '#/definitions/ApisJson'
+      security:
+      - TokenSecured: []
+      - {}
+  /apis/{owner}/{api}:
+    get:
+      tags:
+      - APIs
+      summary: Get a list of API versions
+      operationId: getApiVersions
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: A list of API versions in APIs.json format
+          schema:
+            $ref: '#/definitions/ApisJson'
+      security:
+      - TokenSecured: []
+      - {}
+    post:
+      tags:
+      - APIs
+      summary: Create or update an API
+      description: "Use this operation to create a new API or update an existing API by uploading its OpenAPI definition in YAML or JSON format. The authenticating user must have permissions to create or update APIs in the specified `owner` account.\n\nThe API name and version must follow SwaggerHub naming rules, otherwise the request will be rejected. Refer to:\n \n * [API name format](https://app.swaggerhub.com/help/apis/creating-api)\n * [Version format](https://app.swaggerhub.com/help/apis/versioning#format)\n\n\nWhen a new version of an existing API is created, it is not automatically made the default version. You can use `PUT /apis/{owner}/{api}/.meta` to set the default version.\n\n### cURL example\nLine breaks are added for readability.\n\n    curl -X POST \"https://api.swaggerhub.com/apis/OWNER/API_TO_CREATE_OR_UPDATE\"\n         -H \"Authorization: SWAGGERHUB_API_KEY\"\n         -H \"Content-Type: application/yaml\"\n         --data-binary @C:\\work\\swagger.yaml\n\n**Note:** Use `--data-binary` (not `-d`) when uploading YAML files using cURL, and remember to specify the correct `Content-Type` header."
+      operationId: saveDefinition
+      consumes:
+      - application/json
+      - application/yaml
+      parameters:
+      - name: owner
+        in: path
+        description: API owner name (user or organization name, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: isPrivate
+        in: query
+        description: Whether to make the API private (`true`) or public (`false`)
+        required: false
+        type: boolean
+        default: false
+      - name: version
+        in: query
+        description: |-
+          API version to create or update. If omitted, the version is extracted from the `info.version` field of the provided OpenAPI definition.
+
+          Either the `version` parameter or the `info.version` value must be specified, otherwise the request will be rejected. If both are specified, the `version` parameter overrides the `info.version` value.
+
+          If this API version already exists, it will be updated with the new definition (unless that version has been published - in this case the update will be rejected).
+        required: false
+        type: string
+      - in: body
+        name: definition
+        description: OpenAPI definition in the YAML or JSON format. The content must be syntactically valid YAML or JSON.
+        required: true
+        schema:
+          type: string
+          example: |
+            {
+              "swagger": "2.0",
+              "info": {
+                "title": "Sample API",
+                "version": "1.0.0"
+              },
+              "paths": {}
+            }
+      - name: force
+        in: query
+        description: Force update
+        required: false
+        type: boolean
+      responses:
+        "200":
+          description: Existing API version was successfully updated
+        "201":
+          description: New API or version was successfully created
+        "205":
+          description: The API was successfully saved and should be reloaded
+        "400":
+          description: The specified OpenAPI definition is invalid
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Maximum number of APIs reached
+        "404":
+          description: The specified owner was not found
+        "409":
+          description: Cannot overwrite a published API version
+        "415":
+          description: Invalid content type
+      security:
+      - TokenSecured: []
+    delete:
+      tags:
+      - APIs
+      summary: Delete an API
+      operationId: deleteApi
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The API was successfully deleted
+        "403":
+          description: Access denied
+        "404":
+          description: The specified API not found
+        "409":
+          description: The API has published versions and cannot be deleted
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/rename:
+    post:
+      tags:
+      - APIs
+      summary: Rename an API
+      description: The new name must follow the [naming rules](https://app.swaggerhub.com/help/apis/creating-api).
+      operationId: renameApi
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: newName
+        in: query
+        description: New name
+        required: true
+        type: string
+        maxLength: 60
+        minLength: 3
+      responses:
+        "200":
+          description: The API was successfully renamed
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied (insufficient user permissions)
+        "404":
+          description: The specified owner or API was not found
+        "409":
+          description: An API or domain with the new name already exists, or the new and old names are the same
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/.collaboration:
+    get:
+      tags:
+      - APIs
+      summary: Get API collaborators
+      operationId: getCollaboration
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: expandTeams
+        in: query
+        required: false
+        type: boolean
+        default: false
+      responses:
+        "200":
+          description: The existing collaborators on an API
+          schema:
+            $ref: '#/definitions/Collaboration'
+      security:
+      - TokenSecured: []
+    put:
+      tags:
+      - APIs
+      summary: Update API collaborators
+      operationId: updateCollaboration
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: false
+        schema:
+          $ref: '#/definitions/Collaboration'
+      responses:
+        default:
+          description: Successfully updated API collaborators
+      security:
+      - TokenSecured: []
+    delete:
+      tags:
+      - APIs
+      summary: Delete API collaborators
+      operationId: deleteCollaboration
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      responses:
+        default:
+          description: Successfully deleted collaborators
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}:
+    get:
+      tags:
+      - APIs
+      summary: Get the OpenAPI definition of the specified API version
+      operationId: getDefinition
+      produces:
+      - application/json
+      - application/yaml
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: resolved
+        in: query
+        description: Set to true to get the resolved version of the API definition. The content of all external $refs will be included in the resulting file.
+        required: false
+        type: boolean
+        default: false
+      - name: flatten
+        in: query
+        description: Used only if `resolved`=`true`. Flattening replaces all complex inline schemas with named entries in the `components/schemas` or `definitions` section.
+        required: false
+        type: boolean
+        default: false
+      responses:
+        "200":
+          description: OpenAPI definition in the requested format (YAML or JSON)
+          schema:
+            type: object
+            example:
+              openapi: 3.0.0
+              info:
+                title: Sample API
+                version: 1.0.0
+              paths: {}
+        "400":
+          description: Could not generate resolved definition due to syntax errors in the definition
+          examples:
+            application/json:
+              code: 400
+              message: Cannot resolve invalid API definition, please fix any syntax issues.
+        "404":
+          description: The specified API or version was not found
+      security:
+      - TokenSecured: []
+      - {}
+    delete:
+      tags:
+      - APIs
+      summary: Delete an API version
+      operationId: deleteApiVersion
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The API version was successfully deleted
+        "403":
+          description: Access denied
+        "404":
+          description: The specified API was not found
+        "409":
+          description: The API version is published and cannot be deleted or it is the only version of this API
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/fork:
+    post:
+      tags:
+      - APIs
+      summary: Fork an API
+      description: Creates a [fork](https://app.swaggerhub.com/help/apis/forking-api) of the specified API definition and version. The fork can be created as a new API, or as a new version in another existing API.
+      operationId: forkApi
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: forkVersion
+        description: Fork parameters
+        required: true
+        schema:
+          $ref: '#/definitions/ForkVersion'
+      responses:
+        "201":
+          description: The API was successfully forked
+        "400":
+          description: Some parameters are missing or invalid
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied
+        "404":
+          description: The specified owner or API was not found
+        "409":
+          description: An API with the name and version you're trying to create already exists
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/clone:
+    post:
+      tags:
+      - APIs
+      summary: Create a new API version
+      description: |-
+        Use this operation to clone an existing API version as a new version. The new version will have the same YAML content but with updated `info.version`.
+
+        **Note:** Comments, integrations, and codegen options are not copied to the new version. The default version also remains unchanged.
+      operationId: cloneApi
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: The version to clone (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: newVersion
+        description: An object that contains the new version number and other parameters. The version number must be in the format described in the [documentation](https://app.swaggerhub.com/help/apis/versioning#format).
+        required: true
+        schema:
+          $ref: '#/definitions/NewVersion'
+      responses:
+        "201":
+          description: New API version was successfully created
+        "400":
+          description: Bad request
+        "403":
+          description: Access denied
+        "404":
+          description: The specified API or version was not found
+        "409":
+          description: The API version you are trying to create already exists
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/swagger.json:
+    get:
+      tags:
+      - APIs
+      summary: Get the OpenAPI definition for the specified API version in JSON format
+      operationId: getJsonDefinition
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: resolved
+        in: query
+        description: Set to true to get the resolved version of the API definition. The content of all external $refs will be included in the resulting file.
+        required: false
+        type: boolean
+        default: false
+      - name: flatten
+        in: query
+        description: Used only if `resolved`=`true`. Flattening replaces all complex inline schemas with named entries in the `components/schemas` or `definitions` section.
+        required: false
+        type: boolean
+        default: false
+      responses:
+        "200":
+          description: OpenAPI definition in JSON format
+          schema:
+            type: object
+            example:
+              openapi: 3.0.0
+              info:
+                title: Sample API
+                version: 1.0.0
+              paths: {}
+        "400":
+          description: Could not generate resolved definition due to syntax errors in the definition
+          examples:
+            application/json:
+              code: 400
+              message: Cannot resolve invalid API definition, please fix any syntax issues.
+        "404":
+          description: The specified API or version was not found
+      security:
+      - TokenSecured: []
+      - {}
+  /apis/{owner}/{api}/{version}/swagger.yaml:
+    get:
+      tags:
+      - APIs
+      summary: Get the OpenAPI definition for the specified API version in YAML format
+      operationId: getYamlDefinition
+      produces:
+      - application/yaml
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: resolved
+        in: query
+        description: Set to true to get the resolved version of the API definition. The content of all external $refs will be included in the resulting file.
+        required: false
+        type: boolean
+        default: false
+      - name: flatten
+        in: query
+        description: Used only if `resolved`=`true`. Flattening replaces all complex inline schemas with named entries in the `components/schemas` or `definitions` section.
+        required: false
+        type: boolean
+        default: false
+      responses:
+        "200":
+          description: OpenAPI definition in YAML format
+          examples:
+            application/yaml: |
+              openapi: 3.0.0
+              info:
+                title: Sample API
+                version: 1.0.0
+              paths: {}
+          schema:
+            type: object
+        "400":
+          description: Could not generate resolved definition due to syntax errors in the definition
+          examples:
+            application/json:
+              code: 400
+              message: Cannot resolve invalid API definition, please fix any syntax issues.
+        "404":
+          description: The specified API or version was not found
+      security:
+      - TokenSecured: []
+      - {}
+  /apis/{owner}/{api}/{version}/comments:
+    get:
+      tags:
+      - APIs
+      summary: Get comments for the specified API version
+      operationId: getApiCommentsV2
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Comments for the specified API
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClosableComment'
+        "204":
+          description: No comments were found for the specified API
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified API was not found
+      security:
+      - TokenSecured: []
+    post:
+      tags:
+      - APIs
+      summary: Add a new comment
+      operationId: addApiCommentV2
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/NewComment'
+      responses:
+        "201":
+          description: Newly created comment for the specified API
+          schema:
+            $ref: '#/definitions/ClosableComment'
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified API was not found
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/comments/batch:
+    post:
+      tags:
+      - APIs
+      summary: Bulk update comments
+      operationId: updateApiCommentsV2
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/CommentsBatch'
+      responses:
+        "200":
+          description: Comments were updated
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified API, comment, or reply was not found
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/comments/{comment}:
+    delete:
+      tags:
+      - APIs
+      summary: Delete a comment
+      operationId: deleteApiCommentV2
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Comment was deleted
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified API or comment was not found
+      security:
+      - TokenSecured: []
+    patch:
+      tags:
+      - APIs
+      summary: Update a comment
+      operationId: updateApiCommentV2
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: false
+        schema:
+          $ref: '#/definitions/ClosableCommentPatch'
+      responses:
+        "200":
+          description: Comment was updated
+          schema:
+            $ref: '#/definitions/ClosableComment'
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified API or comment was not found
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/comments/{comment}/status/{status}:
+    put:
+      tags:
+      - APIs
+      summary: Resolve or reopen a comment
+      operationId: setApiCommentStatusV2
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      - name: status
+        in: path
+        description: Comment status
+        required: true
+        type: string
+        enum:
+        - OPEN
+        - RESOLVED
+      responses:
+        "200":
+          description: Comment status was updated
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified API or comment was not found
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/comments/{comment}/replies:
+    post:
+      tags:
+      - APIs
+      summary: Reply to a comment
+      operationId: addApiCommentReplyV2
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/NewReply'
+      responses:
+        "201":
+          description: Newly created reply
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Comment'
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified API or comment was not found
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/comments/{comment}/replies/{reply}:
+    delete:
+      tags:
+      - APIs
+      summary: Delete a comment reply
+      operationId: deleteApiCommentReplyV2
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      - name: reply
+        in: path
+        description: Reply identifier
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Сomment reply was deleted
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified API, comment, or reply was not found
+      security:
+      - TokenSecured: []
+    patch:
+      tags:
+      - APIs
+      summary: Update a comment reply
+      operationId: updateApiCommentReplyV2
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      - name: reply
+        in: path
+        description: Reply identifier
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: false
+        schema:
+          $ref: '#/definitions/CommentPatch'
+      responses:
+        "200":
+          description: Сomment reply was updated
+          schema:
+            $ref: '#/definitions/Comment'
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified API, comment, or reply was not found
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/.comment:
+    get:
+      tags:
+      - APIs
+      summary: Get comments for the specified API version
+      description: |-
+        **Deprecated.** Use `GET /apis/{owner}/{api}/{version}/comments` instead.
+        Returns all the comments and replies added by collaborators in the specified API version.
+      operationId: getApiComments
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: A list of comments for the specified API version
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClosableComment'
+        "204":
+          description: No comments were found for the specified API version
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied (insufficient user permissions)
+        "404":
+          description: The specified API or version was not found
+      security:
+      - TokenSecured: []
+      deprecated: true
+  /apis/{owner}/{api}/settings/default:
+    get:
+      tags:
+      - APIs
+      summary: Get the default version of an API
+      description: This operation returns the version identifier, such as `1.0.0`. To get the definition itself, use `GET /apis/{owner}/{api}/{version}`.
+      operationId: getApiDefaultVersion
+      produces:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The default version identifier for this API
+          schema:
+            $ref: '#/definitions/DefaultVersion'
+        "404":
+          description: The specified API was not found. If it is private, make sure the request is authenticated.
+      security:
+      - TokenSecured: []
+      - {}
+    put:
+      tags:
+      - APIs
+      summary: Set the default API version
+      operationId: setApiDefaultVersion
+      consumes:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: defaultVersion
+        description: An object that specifies the default version for this API
+        required: true
+        schema:
+          $ref: '#/definitions/DefaultVersion'
+      responses:
+        "200":
+          description: The default version was successfully changed
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied (insufficient user permissions)
+        "404":
+          description: The specified API or version was not found
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/settings/lifecycle:
+    get:
+      tags:
+      - APIs
+      summary: Get the published status for the specified API and version
+      operationId: getLifecycleSettings
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The published status of this API version
+          schema:
+            $ref: '#/definitions/LifecycleSettings'
+        "401":
+          description: The access token is missing or invalid
+        "404":
+          description: The specified API or version was not found
+      security:
+      - TokenSecured: []
+    put:
+      tags:
+      - APIs
+      summary: Publish or unpublish an API version
+      operationId: setLifecycleSettings
+      consumes:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: settings
+        description: 'An object that specifies the new `published` state: `true` means published, `false` - unpublished'
+        required: true
+        schema:
+          $ref: '#/definitions/LifecycleSettings'
+      - name: force
+        in: query
+        description: To publish an API that references _unpublished_ domains, this parameter must be `true`. Otherwise, the request will be rejected with status code 424.
+        required: false
+        type: boolean
+        default: false
+      responses:
+        "200":
+          description: Successfully published or unpublished the API
+        "400":
+          description: The API definition contains [standardization](https://app.swaggerhub.com/help/organizations/api-standardization) errors which prevent it from being published.
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied (insufficient user permissions)
+        "404":
+          description: The specified API or version was not found
+        "424":
+          description: |-
+            The API version you are trying to publish contains references to _unpublished_ domains. If those domains change, it may affect your API. To publish the API anyway, repeat the request with the `force=true` query parameter.
+
+            The response body contains a list of unpublished domains referenced from this API.
+          examples:
+            application/json:
+              code: 424
+              message: Conflicts detected
+              details:
+                offset: 0
+                total: 2
+                items:
+                - groupId: acme-org
+                  apiId: Common Models
+                  versionId: 1.0.0
+                  type: DOMAIN
+                  published: false
+                  private: false
+                - groupId: acme-org
+                  apiId: Common Responses
+                  versionId: 1.0.2
+                  type: DOMAIN
+                  published: false
+                  private: false
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/settings/private:
+    get:
+      tags:
+      - APIs
+      summary: Get the visibility (public or private) of API version
+      operationId: getPrivateSettings
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The response body indicates whether this API version is private (`true`) or public (`false`)
+          schema:
+            $ref: '#/definitions/VisibilitySettings'
+        "401":
+          description: The access token is missing or invalid
+        "404":
+          description: The specified API or version was not found
+      security:
+      - TokenSecured: []
+    put:
+      tags:
+      - APIs
+      summary: Set the visibility (public or private) of an API version
+      operationId: setPrivateSettings
+      consumes:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: settings
+        description: 'An object that specifies the new visibility level: `true` means private, `false` - public'
+        required: true
+        schema:
+          $ref: '#/definitions/VisibilitySettings'
+      responses:
+        "200":
+          description: API visibility was updated
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied (insufficient user permissions)
+        "404":
+          description: The specified API or version was not found
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/validation:
+    get:
+      tags:
+      - APIs
+      summary: Get API Standardization errors and warnings
+      description: |-
+        If your organization has [API standardization](https://app.swaggerhub.com/help/organizations/api-standardization) configured, you can use this operation to validate a specific API version and get a list of errors or warnings with line numbers.
+
+        **Note:** This operation checks for standardization errors only and does not return OpenAPI syntax errors (such as misspelled keywords) or YAML syntax errors.
+      operationId: getValidation
+      produces:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: Organization name (case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: |-
+            An object that contains a list of standardization errors and warnings found in the specified API version. Error information includes line numbers, severity (error or warning), and error messages.
+            If no standardization errors or warnings are found, an empty validation array is returned.
+          schema:
+            $ref: '#/definitions/ValidationResult'
+        "404":
+          description: The specified API or version was not found, or standardization is not enabled for this organization.
+        "403":
+          description: Access denied
+      security:
+      - TokenSecured: []
+  /projects:
+    get:
+      tags:
+      - Projects
+      summary: Get all projects that a user has access to
+      description: Returns all projects that the authenticating user has access to. Organization owners get a list of all projects in owned organizations. Other members get a list of just the projects they are member of.
+      operationId: getUserProjects
+      produces:
+      - application/json
+      parameters:
+      - name: nameOnly
+        in: query
+        description: Return the project information excluding APIs and domains
+        required: false
+        type: boolean
+        default: false
+      - name: page
+        in: query
+        description: Page to return
+        required: false
+        type: integer
+        default: 0
+        format: int32
+      - name: limit
+        in: query
+        description: Number of results per page (1 .. 100)
+        required: false
+        type: integer
+        default: 10
+        maximum: 100
+        format: int32
+      - name: sort
+        in: query
+        description: |
+          Sort criteria or result set:
+          * NAME
+          * OWNER
+        required: false
+        type: string
+        default: NAME
+        enum:
+        - NAME
+        - OWNER
+      - name: order
+        in: query
+        description: Sort order
+        required: false
+        type: string
+        default: ASC
+        enum:
+        - ASC
+        - DESC
+      responses:
+        "200":
+          description: All projects accessible to the current user
+          schema:
+            $ref: '#/definitions/ProjectsJson'
+        "401":
+          description: The access token is missing or invalid
+      security:
+      - TokenSecured: []
+  /projects/{owner}:
+    get:
+      tags:
+      - Projects
+      summary: Get all projects of an organization
+      operationId: getOrgProjectsV2
+      produces:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: Organization name (case-sensitive)
+        required: true
+        type: string
+      - name: nameOnly
+        in: query
+        description: Return the project information excluding APIs and domains
+        required: false
+        type: boolean
+        default: false
+      - name: page
+        in: query
+        description: Page to return
+        required: false
+        type: integer
+        default: 0
+        format: int32
+      - name: limit
+        in: query
+        description: Number of results per page (1 .. 100)
+        required: false
+        type: integer
+        default: 10
+        maximum: 100
+        format: int32
+      - name: order
+        in: query
+        description: Sort order
+        required: false
+        type: string
+        default: ASC
+        enum:
+        - ASC
+        - DESC
+      responses:
+        "200":
+          description: Project belonging to the specified organization
+          schema:
+            $ref: '#/definitions/ProjectsJson'
+        "403":
+          description: Projects are not available in the organization's plan
+        "404":
+          description: The specified organization was not found
+      security:
+      - TokenSecured: []
+    post:
+      tags:
+      - Projects
+      summary: Create a project in an organization
+      operationId: createProject
+      parameters:
+      - name: owner
+        in: path
+        description: Organization name (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: projectRequest
+        description: |
+          The project data. Properties that are not provided are set to empty values.
+        required: true
+        schema:
+          $ref: '#/definitions/Project'
+      responses:
+        "201":
+          description: The project has been created successfully
+        "400":
+          description: |
+            Bad request. For example, some of the specified `apis` or `domains` do not exist in the organization.
+          examples:
+            application/json:
+              error: Unable to create project. Some api or domain entries are invalid.
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Projects are not available in the organization's plan
+        "404":
+          description: The specified organization was not found
+        "409":
+          description: A project with this name already exists in the organization
+      security:
+      - TokenSecured: []
+  /projects/{owner}/{projectId}:
+    get:
+      tags:
+      - Projects
+      summary: Get project information
+      operationId: getProjectV2
+      produces:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: Organization name (case-sensitive)
+        required: true
+        type: string
+      - name: projectId
+        in: path
+        description: Project name (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Project information
+          schema:
+            $ref: '#/definitions/Project'
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: |
+            Projects are not available in the organization's plan, or you are not a member of the specified project
+        "404":
+          description: The specified organization or project name was not found
+      security:
+      - TokenSecured: []
+    put:
+      tags:
+      - Projects
+      summary: Update a project
+      description: |-
+        Use this operation to update an existing project, for example, add or remove APIs.
+
+        When updating a project, the `apis` and `domains` lists _replace_ the existing ones. This means that to add new APIs and domains to a project, you need to send the `apis` and `domains` lists containing both the existing and new APIs and domains.
+
+        To add a single API or domain to a project, you can use `PUT /projects/{owner}/{projectId}/{specType}/{name}` instead.
+      operationId: saveProjectV2
+      parameters:
+      - name: owner
+        in: path
+        description: Organization name (case-sensitive)
+        required: true
+        type: string
+      - name: projectId
+        in: path
+        description: Project name (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: projectRequest
+        description: |
+          The project data. Properties that are not provided are set to empty values.
+        required: true
+        schema:
+          $ref: '#/definitions/Project'
+      responses:
+        "200":
+          description: The project has been updated successfully
+        "400":
+          description: |
+            Bad request. For example, some of the specified `apis` or `domains` do not exist in the organization to which the project belongs.
+          examples:
+            application/json:
+              error: Unable to save the project. Some API or domain names are invalid.
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: |
+            Projects are not available in the organization's plan, or you are not a member of the specified project
+        "404":
+          description: The specified organization or project name was not found
+      security:
+      - TokenSecured: []
+    delete:
+      tags:
+      - Projects
+      summary: Delete a project
+      operationId: deleteProjectV2
+      parameters:
+      - name: owner
+        in: path
+        description: Organization name (case-sensitive)
+        required: true
+        type: string
+      - name: projectId
+        in: path
+        description: Project name (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "204":
+          description: The project has been deleted successfully
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Projects are not available in the organization's plan, or you are not a member of the specified project.
+        "404":
+          description: The specified organization or project name was not found
+      security:
+      - TokenSecured: []
+  /projects/{owner}/{projectId}/{specType}/{name}:
+    put:
+      tags:
+      - Projects
+      summary: Add an API or domain to a project
+      description: |-
+        Use this operation to add a single API or domain to the specified project.
+
+        To add multiple APIs or domains at once, use `PUT /projects/{owner}/{projectId}`.
+      operationId: addSpecToProjectV2
+      parameters:
+      - name: owner
+        in: path
+        description: Organization name (case-sensitive)
+        required: true
+        type: string
+      - name: projectId
+        in: path
+        description: Project name (case-sensitive)
+        required: true
+        type: string
+      - name: specType
+        in: path
+        description: Definition type - `apis` or `domains`.
+        required: true
+        type: string
+        enum:
+        - apis
+        - domains
+      - name: name
+        in: path
+        description: The name of an API or domain that you want to add to the project. Case-sensitive.
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The specified API or domain was successfully added to the project
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: |
+            The projects feature is not available for the organization's plan, or the authenticating user does not have permissions to add definitions to this project
+        "404":
+          description: The specified organization or project name was not found
+        "409":
+          description: The project already contains this API or domain
+      security:
+      - TokenSecured: []
+  /projects/{owner}/{projectId}/members:
+    get:
+      tags:
+      - Projects
+      summary: Get project members
+      operationId: getProjectMembersV2
+      produces:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: Organization name (case-sensitive)
+        required: true
+        type: string
+      - name: projectId
+        in: path
+        description: Project name (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: A list of project members (users and teams)
+          schema:
+            $ref: '#/definitions/ProjectMemberList'
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: |
+            Projects are not available in the organization's plan, or you are not a member of the specified project.
+        "404":
+          description: The specified organization or project name was not found
+      security:
+      - TokenSecured: []
+    put:
+      tags:
+      - Projects
+      summary: Update a project's members list
+      description: |
+        When updating a project, the `members` list _replaces_ the existing one. This means that to add new members to a project, you need to send the `members` list containing both the existing and new members.
+      operationId: updateProjectMembersV2
+      consumes:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: Organization name (case-sensitive)
+        required: true
+        type: string
+      - name: projectId
+        in: path
+        description: Project name (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: projectMemberList
+        description: A list of users and teams to add to the project
+        required: true
+        schema:
+          $ref: '#/definitions/ProjectMemberList'
+      responses:
+        "200":
+          description: The project members list has been updated successfully
+        "403":
+          description: |
+            Projects are not available in the organization's plan, or you are not a member of the specified project.
+        "404":
+          description: The specified organization or project name was not found
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/integrations:
+    post:
+      tags:
+      - Integrations
+      summary: Create an integration for the specified API and version
+      description: |-
+        Use this operation to add a source control integration, a [mock](https://app.swaggerhub.com/help/integrations/api-auto-mocking), or a [webhook](https://app.swaggerhub.com/help/integrations/webhook) for a specific API version. The integration type is determined by which object is provided in the request body (specifically, by the `configType` value).
+
+        For a list of fields that need to be provided in the request body, see the descriptions of the following objects in the "Models" section at the bottom of API docs:
+
+         * `GitHubIntegration`
+         * `GitHubEnterpriseIntegration`
+         * `GitLabIntegration`
+         * `BitbucketCloudIntegration`
+         * `BitbucketServerIntegration`
+         * `AzureDevopsServicesIntegration`
+         * `AutoMockingIntegration`
+         * `WebhookIntegration`
+
+        Notes:
+          * The integration `name` must be unique among all integrations configured for the given API version.
+          * The operation does not validate the repository details and access tokens.
+          * If `syncMethod`=_Advanced Sync_, you must specify a non-empty list of either `providedPaths` or `managedPaths` (or both). If you are not sure which paths to use, use `providedPaths`=`["*"]`.
+      operationId: createIntegration
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: integrationTypeConfiguration
+        description: |
+          Can be one of the following objects: `GitHubIntegration`, `GitHubEnterpriseIntegration`, `GitLabIntegration`, `BitbucketCloudIntegration`, `BitbucketServerIntegration`, `AzureDevopsServicesIntegration`, `AutoMockingIntegration`, `WebhookIntegration`.
+        required: true
+        schema:
+          type: object
+          example:
+            configType: GITHUB
+            name: Java client SDK
+            token: abcd12345
+            owner: myOrg
+            repository: petstore
+            branch: develop
+            target: java
+            syncMethod: Advanced Sync
+            outputFolder: sdk/java
+            providedPaths:
+            - '*'
+            managedPaths: []
+            ignoredPaths: []
+            enabled: true
+      responses:
+        "201":
+          description: The integration was successfully created
+        "400":
+          description: The integration configuration was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: Access denied
+        "404":
+          description: The specified owner, API, or version was not found
+        "409":
+          description: An integration with this name already exists in this API
+        "415":
+          description: Invalid content type
+      security:
+      - TokenSecured: []
+  /domains:
+    get:
+      tags:
+      - Domains
+      summary: Search domains
+      description: This is a convenience alias for `GET /specs?specType=DOMAIN`.
+      operationId: searchDomains
+      parameters:
+      - name: query
+        in: query
+        description: Free text query to match
+        required: false
+        type: string
+      - name: state
+        in: query
+        description: |
+          Matches against published state of the spec:
+          * UNPUBLISHED - spec is a draft, a work in progress
+          * PUBLISHED - spec is a stable version ready for consuming from client applications
+          * ANY - either PUBLISHED or UNPUBLISHED
+        required: false
+        type: string
+        default: ALL
+        enum:
+        - ALL
+        - PUBLISHED
+        - UNPUBLISHED
+      - name: page
+        in: query
+        description: Page to return
+        required: false
+        type: integer
+        default: 0
+        format: int32
+      - name: limit
+        in: query
+        description: Number of results per page (1 .. 100)
+        required: false
+        type: integer
+        default: 10
+        maximum: 100
+        format: int32
+      - name: sort
+        in: query
+        description: |
+          Sort criteria of result set:
+          * NAME
+          * UPDATED
+          * CREATED
+          * OWNER
+          * BEST_MATCH - by relevance
+          * TITLE - by `info.title`
+        required: false
+        type: string
+        default: NAME
+        enum:
+        - NAME
+        - UPDATED
+        - CREATED
+        - OWNER
+        - BEST_MATCH
+        - TITLE
+      - name: order
+        in: query
+        description: Sort order
+        required: false
+        type: string
+        default: ASC
+        enum:
+        - ASC
+        - DESC
+      responses:
+        "303":
+          description: Redirect to `GET /specs`, with all query parameters preserved
+          headers:
+            Location:
+              type: string
+      security:
+      - TokenSecured: []
+      - {}
+  /domains/{owner}:
+    get:
+      tags:
+      - Domains
+      summary: Get a list of domains of the specified owner
+      operationId: getOwnerDomains
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: page
+        in: query
+        description: Page to return
+        required: false
+        type: integer
+        default: 0
+        format: int32
+      - name: limit
+        in: query
+        description: Number of results per page (1 .. 100)
+        required: false
+        type: integer
+        default: 10
+        maximum: 100
+        format: int32
+      - name: sort
+        in: query
+        description: |
+          Sort criteria of result set:
+          * NAME
+          * UPDATED
+          * CREATED
+          * OWNER
+          * BEST_MATCH - by relevance
+          * TITLE - by `info.title`
+        required: false
+        type: string
+        default: NAME
+        enum:
+        - NAME
+        - UPDATED
+        - CREATED
+        - OWNER
+        - BEST_MATCH
+        - TITLE
+      - name: order
+        in: query
+        description: Sort order
+        required: false
+        type: string
+        default: ASC
+        enum:
+        - ASC
+        - DESC
+      responses:
+        "200":
+          description: A list of domains in APIs.json format
+          schema:
+            $ref: '#/definitions/ApisJson'
+      security:
+      - TokenSecured: []
+      - {}
+  /domains/{owner}/{domain}:
+    get:
+      tags:
+      - Domains
+      summary: Get a list of domain versions
+      operationId: getDomainVersions
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: A list of domain versions in APIs.json format
+          schema:
+            $ref: '#/definitions/ApisJson'
+      security:
+      - TokenSecured: []
+      - {}
+    post:
+      tags:
+      - Domains
+      summary: Create or update a domain
+      operationId: saveDomainDefinition
+      consumes:
+      - application/json
+      - application/yaml
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: isPrivate
+        in: query
+        description: Specifies whether the domain has to be private
+        required: false
+        type: boolean
+        default: false
+      - name: version
+        in: query
+        description: Domain version. If omitted, will be taken from the `info.version` field in the definition.
+        required: false
+        type: string
+      - in: body
+        name: definition
+        description: OpenAPI definition of this domain
+        required: false
+        schema:
+          type: string
+      - name: force
+        in: query
+        description: Force update
+        required: false
+        type: boolean
+      responses:
+        "200":
+          description: The domain was successfully saved
+        "201":
+          description: New domain was successfully saved
+        "205":
+          description: The domain was successfully saved and should be reloaded
+        "403":
+          description: Maximum number of domains reached
+        "409":
+          description: Cannot overwrite a published domain version
+        "415":
+          description: Invalid content type
+      security:
+      - TokenSecured: []
+    delete:
+      tags:
+      - Domains
+      summary: Delete a domain
+      operationId: deleteDomain
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: force
+        in: query
+        description: If this domain is referenced from other APIs and domains, this parameter must be `true`. Otherwise, the request will be rejected with status code 424.
+        required: false
+        type: boolean
+        default: false
+      responses:
+        "200":
+          description: The domain was successfully deleted
+        "403":
+          description: Access denied
+        "404":
+          description: The specified domain not found
+        "409":
+          description: The domain has published versions and can not be deleted
+        "424":
+          description: |-
+            The domain you are trying to delete is referenced from other APIs and domains. To delete it anyway, repeat the request with the `force=true` query parameter.
+
+            The response body contains a list of APIs and domains that reference this domain.
+          examples:
+            application/json:
+              code: 424
+              message: Conflicts detected
+              details:
+                offset: 0
+                total: 2
+                items:
+                - groupId: acme-org
+                  apiId: reports
+                  versionId: 1.0.0
+                  type: API
+                  private: false
+                - groupId: acme-org
+                  apiId: common-responses
+                  versionId: 1.0.2
+                  type: DOMAIN
+                  private: false
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/rename:
+    post:
+      tags:
+      - Domains
+      summary: Rename a domain
+      description: The new name must follow the [naming rules](https://app.swaggerhub.com/help/apis/creating-api).
+      operationId: renameDomain
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: newName
+        in: query
+        description: New name
+        required: true
+        type: string
+        maxLength: 60
+        minLength: 3
+      - name: force
+        in: query
+        description: If this domain is referenced from other APIs and domains, this parameter must be true. Otherwise, the request will be rejected with status code 424.
+        required: false
+        type: boolean
+        default: false
+      responses:
+        "200":
+          description: The domain was successfully renamed
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied (insufficient user permissions)
+        "409":
+          description: An API or domain with the new name already exists, or the new and old names are the same
+        "424":
+          description: |-
+            The domain you are trying to rename is referenced from other APIs or domains. Renaming the domain will break the references in those definitions. To rename the domain anyway, repeat the request with the `force=true` query parameter.
+
+            The response body contains a list of APIs and domains that reference this domain.
+          examples:
+            application/json:
+              code: 424
+              message: Conflicts detected
+              details:
+                offset: 0
+                total: 2
+                items:
+                - groupId: acme-org
+                  apiId: reports
+                  versionId: 1.0.0
+                  type: API
+                  private: false
+                - groupId: acme-org
+                  apiId: common-responses
+                  versionId: 1.0.2
+                  type: DOMAIN
+                  private: false
+          schema:
+            type: object
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}:
+    get:
+      tags:
+      - Domains
+      summary: Get the OpenAPI definition of the specified domain version
+      operationId: getDomainDefinition
+      produces:
+      - application/json
+      - application/yaml
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OpenAPI definition of a domain in the requested format (YAML or JSON)
+          schema:
+            type: object
+        "404":
+          description: The specified domain or version was not found
+      security:
+      - TokenSecured: []
+      - {}
+    delete:
+      tags:
+      - Domains
+      summary: Delete a domain version
+      operationId: deleteDomainVersion
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: force
+        in: query
+        description: If this domain version is referenced from other APIs and domains, this parameter must be `true`. Otherwise, the request will be rejected with status code 424.
+        required: false
+        type: boolean
+        default: false
+      responses:
+        "200":
+          description: The domain version was successfully deleted
+        "403":
+          description: Access denied
+        "404":
+          description: The specified domain or version was not found
+        "409":
+          description: The domain version is published and can not be deleted or it is the only version of this domain
+        "424":
+          description: |-
+            The domain version you are trying to delete is referenced from other APIs and domains. To delete it anyway, repeat the request with the `force=true` query parameter.
+
+            The response body contains a list of APIs and domains that reference this domain version.
+          examples:
+            application/json:
+              code: 424
+              message: Conflicts detected
+              details:
+                offset: 0
+                total: 2
+                items:
+                - groupId: acme-org
+                  apiId: reports
+                  versionId: 1.0.0
+                  type: API
+                  private: false
+                - groupId: acme-org
+                  apiId: common-responses
+                  versionId: 1.0.2
+                  type: DOMAIN
+                  private: false
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}/fork:
+    post:
+      tags:
+      - Domains
+      summary: Fork a domain
+      description: Creates a [fork](https://app.swaggerhub.com/help/apis/forking-api) of the specified domain definition and version. The fork can be created as a new domain, or as a new version in another existing domain.
+      operationId: forkDomain
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: forkVersion
+        description: Fork parameters
+        required: true
+        schema:
+          $ref: '#/definitions/ForkVersion'
+      responses:
+        "201":
+          description: The domain was successfully forked
+        "400":
+          description: Some parameters are missing or invalid
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied
+        "404":
+          description: The specified owner or domain was not found
+        "409":
+          description: A domain with the name and version you're trying to create already exists
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}/clone:
+    post:
+      tags:
+      - Domains
+      summary: Create a new domain version
+      description: |-
+        Use this operation to clone an existing domain version as a new version.
+
+        Note that the new version is not automatically set as the default version.
+      operationId: cloneDomain
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: The version to clone (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: newVersion
+        description: An object that contains the new version number and other parameters. The version number must be in the format described in the [documentation](https://app.swaggerhub.com/help/apis/versioning#format).
+        required: true
+        schema:
+          $ref: '#/definitions/NewVersion'
+      responses:
+        "201":
+          description: New domain version was successfully created
+        "400":
+          description: Bad request
+        "403":
+          description: Access denied
+        "404":
+          description: The specified domain or version was not found
+        "409":
+          description: The domain version you are trying to create already exists
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}/domain.json:
+    get:
+      tags:
+      - Domains
+      summary: Get the OpenAPI definition for the specified domain version in JSON format
+      operationId: getDomainJsonDefinition
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Domain definition in JSON format
+          schema:
+            type: object
+        "404":
+          description: The specified domain or version was not found
+      security:
+      - TokenSecured: []
+      - {}
+  /domains/{owner}/{domain}/{version}/domain.yaml:
+    get:
+      tags:
+      - Domains
+      summary: Get the OpenAPI definition for the specified domain version in YAML format
+      operationId: getDomainYamlDefinition
+      produces:
+      - application/yaml
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Domain definition in YAML format
+          schema:
+            type: object
+        "404":
+          description: The specified domain or version was not found
+      security:
+      - TokenSecured: []
+      - {}
+  /domains/{owner}/{domain}/{version}/comments:
+    get:
+      tags:
+      - Domains
+      summary: Get comments for the specified domain version
+      operationId: getDomainCommentsV2
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Comments for the specified domain version
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClosableComment'
+        "204":
+          description: No comments were found for the specified domain version
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified domain was not found
+      security:
+      - TokenSecured: []
+    post:
+      tags:
+      - Domains
+      summary: Add a new comment
+      operationId: addDomainCommentV2
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/NewComment'
+      responses:
+        "200":
+          description: Newly created comment for the specified domain
+          schema:
+            $ref: '#/definitions/ClosableComment'
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified domain was not found
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}/comments/batch:
+    post:
+      tags:
+      - Domains
+      summary: Bulk update comments
+      operationId: updateDomainCommentsV2
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/CommentsBatch'
+      responses:
+        "200":
+          description: Comments were updated
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified domain, comment, or reply was not found
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}/comments/{comment}:
+    delete:
+      tags:
+      - Domains
+      summary: Delete a comment
+      operationId: deleteDomainCommentV2
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Comment was deleted
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified domain or comment was not found
+      security:
+      - TokenSecured: []
+    patch:
+      tags:
+      - Domains
+      summary: Update a comment
+      operationId: updateDomainCommentV2
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: false
+        schema:
+          $ref: '#/definitions/ClosableCommentPatch'
+      responses:
+        "200":
+          description: Comment was updated
+          schema:
+            $ref: '#/definitions/ClosableComment'
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified domain or comment was not found
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}/comments/{comment}/status/{status}:
+    put:
+      tags:
+      - Domains
+      summary: Resolve or reopen a comment
+      operationId: setDomainCommentStatusV2
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      - name: status
+        in: path
+        description: Comment status
+        required: true
+        type: string
+        enum:
+        - OPEN
+        - RESOLVED
+      responses:
+        "200":
+          description: Comment status was updated
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified domain or comment was not found
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}/comments/{comment}/replies:
+    post:
+      tags:
+      - Domains
+      summary: Reply to a comment
+      operationId: addDomainCommentReplyV2
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/NewReply'
+      responses:
+        "200":
+          description: Newly created reply
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Comment'
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified domain or comment was not found
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}/comments/{comment}/replies/{reply}:
+    delete:
+      tags:
+      - Domains
+      summary: Delete a comment reply
+      operationId: deleteDomainCommentReplyV2
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      - name: reply
+        in: path
+        description: Reply identifier
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Comment reply was deleted
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified domain, comment, or reply was not found
+      security:
+      - TokenSecured: []
+    patch:
+      tags:
+      - Domains
+      summary: Update a comment reply
+      operationId: updateDomainCommentReplyV2
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: comment
+        in: path
+        description: Comment identifier
+        required: true
+        type: string
+      - name: reply
+        in: path
+        description: Reply identifier
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: false
+        schema:
+          $ref: '#/definitions/CommentPatch'
+      responses:
+        "200":
+          description: Comment reply was updated
+          schema:
+            $ref: '#/definitions/Comment'
+        "400":
+          description: The request body was invalid
+        "401":
+          description: Access token is not set or invalid
+        "403":
+          description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+        "404":
+          description: The specified domain, comment, or reply was not found
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}/.comment:
+    get:
+      tags:
+      - Domains
+      summary: Get comments for the specified domain version
+      description: |-
+        **Deprecated.** Use `GET /domains/{owner}/{domain}/{version}/comments` instead.
+
+        Returns all the comments and replies added by collaborators in the specified domain version.
+      operationId: getDomainComments
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Comments for the specified domain
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClosableComment'
+        "204":
+          description: No comments were found for the specified domain version
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied (insufficient user permissions)
+        "404":
+          description: The specified domain or version was not found
+      security:
+      - TokenSecured: []
+      deprecated: true
+  /domains/{owner}/{domain}/settings/default:
+    get:
+      tags:
+      - Domains
+      summary: Get the default version of a domain
+      description: This operation returns the version identifier, such as `1.0.0`. To get the definition itself, use `GET /domains/{owner}/{domain}/{version}`.
+      operationId: getDomainDefaultVersion
+      produces:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The default version identifier for this domain
+          schema:
+            $ref: '#/definitions/DefaultVersion'
+        "404":
+          description: The specified API was not found. If it is private, make sure the request is authenticated.
+      security:
+      - TokenSecured: []
+      - {}
+    put:
+      tags:
+      - Domains
+      summary: Set the default version for a domain
+      operationId: setDomainDefaultVersion
+      consumes:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: defaultVersion
+        description: An object that specifies the default version for this domain
+        required: true
+        schema:
+          $ref: '#/definitions/DefaultVersion'
+      responses:
+        "200":
+          description: The default version was successfully changed
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied (insufficient user permissions)
+        "404":
+          description: The specified domain or version was not found
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}/settings/lifecycle:
+    get:
+      tags:
+      - Domains
+      summary: Get the published status for the specified domain and version
+      operationId: getDomainLifecycleSettings
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The published status of this domain version
+          schema:
+            $ref: '#/definitions/LifecycleSettings'
+        "401":
+          description: The access token is missing or invalid
+        "404":
+          description: The specified domain or version was not found
+      security:
+      - TokenSecured: []
+    put:
+      tags:
+      - Domains
+      summary: Publish or unpublish a domain version
+      operationId: setDomainLifecycleSettings
+      consumes:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: settings
+        description: 'An object that specifies the new `published` state: `true` means published, `false` - unpublished'
+        required: true
+        schema:
+          $ref: '#/definitions/LifecycleSettings'
+      - name: force
+        in: query
+        description: To publish a domain that references other _unpublished_ domains, this parameter must be `true`. Otherwise, the request will be rejected with status code 424.
+        required: false
+        type: boolean
+        default: false
+      responses:
+        "200":
+          description: Successfully published or unpublished the domain
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied (insufficient user permissions)
+        "404":
+          description: The specified domain or version was not found
+        "424":
+          description: |-
+            The domain version you are trying to publish contains references to other _unpublished_ domains. If those domains change, it may affect your domain. To publish the domain anyway, repeat the request with the `force=true` query parameter.
+
+            The response body contains a list of unpublished domains referenced from this domain.
+          examples:
+            application/json:
+              code: 424
+              message: Conflicts detected
+              details:
+                offset: 0
+                total: 2
+                items:
+                - groupId: acme-org
+                  apiId: Common Models
+                  versionId: 1.0.0
+                  type: DOMAIN
+                  published: false
+                  private: false
+                - groupId: acme-org
+                  apiId: Common Responses
+                  versionId: 1.0.2
+                  type: DOMAIN
+                  published: false
+                  private: false
+      security:
+      - TokenSecured: []
+  /domains/{owner}/{domain}/{version}/settings/private:
+    get:
+      tags:
+      - Domains
+      summary: Get the visibility (public or private) of a domain version
+      operationId: getDomainPrivateSettings
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The response body indicates whether this domain version is private (`true`) or public (`false`)
+          schema:
+            $ref: '#/definitions/VisibilitySettings'
+        "401":
+          description: The access token is missing or invalid
+        "404":
+          description: The specified domain or version was not found
+      security:
+      - TokenSecured: []
+    put:
+      tags:
+      - Domains
+      summary: Set the visibility (public or private) of a domain version
+      operationId: setDomainPrivateSettings
+      consumes:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: Domain owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: domain
+        in: path
+        description: Domain name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - in: body
+        name: settings
+        description: 'An object that specifies the new visibility level: `true` means private, `false` - public'
+        required: true
+        schema:
+          $ref: '#/definitions/VisibilitySettings'
+      - name: force
+        in: query
+        description: To change the visibility from _public_ to _private_ in case this domain is referenced from other _public_ definitions, this parameter must be `true`. Otherwise, the request will be rejected with status code 424.
+        required: false
+        type: boolean
+        default: false
+      responses:
+        "200":
+          description: Domain visibility was updated
+        "401":
+          description: The access token is missing or invalid
+        "403":
+          description: Access denied (insufficient user permissions)
+        "404":
+          description: The specified domain or version was not found
+        "424":
+          description: |-
+            The domain version you are trying to make _private_ is referenced from other _public_ definitions. Changing domain visibility may affect those definitions. To proceed anyway, repeat the request with the `force=true` query parameter.
+
+            The response body contains a list of APIs and domains that may be affected by this change.
+          examples:
+            application/json:
+              code: 424
+              message: Conflicts detected
+              details:
+                offset: 0
+                total: 2
+                items:
+                - groupId: acme-org
+                  apiId: reports
+                  versionId: 1.0.0
+                  type: API
+                  private: false
+                - groupId: acme-org
+                  apiId: common-responses
+                  versionId: 1.0.2
+                  type: DOMAIN
+                  private: false
+      security:
+      - TokenSecured: []
+securityDefinitions:
+  TokenSecured:
+    description: Specify your SwaggerHub API key found in https://app.swaggerhub.com/settings/apiKey.
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  ApisJsonProperty:
+    type: object
+    required:
+    - type
+    properties:
+      type:
+        type: string
+      url:
+        type: string
+      value:
+        type: string
+    description: An API property. Has a `type` and either `url` or `value`.
+  ApisJson:
+    type: object
+    properties:
+      name:
+        type: string
+        example: Default listing
+      description:
+        type: string
+        example: Default registry listing
+      url:
+        type: string
+      offset:
+        type: integer
+        format: int32
+      totalCount:
+        type: integer
+        format: int64
+        example: 1
+      apis:
+        type: array
+        items:
+          $ref: '#/definitions/ApisJsonApi'
+  ApisJsonApi:
+    type: object
+    properties:
+      name:
+        type: string
+        example: petstore
+      description:
+        type: string
+        example: This is a sample Petstore server.
+      tags:
+        type: array
+        description: Reserved for future use
+        uniqueItems: true
+        items:
+          type: string
+      properties:
+        type: array
+        example:
+        - type: Swagger
+          url: https://api.swaggerhub.com/apis/username/petstore/1.1
+        - type: X-Version
+          value: "1.1"
+        - type: X-Created
+          value: 2017-01-16T13:39:06.000+0000
+        - type: X-Modified
+          value: 2017-01-25T11:48:13.000+0000
+        - type: X-Published
+          value: "true"
+        - type: X-Versions
+          value: 1.0,*1.1,1.1-oas3
+        - type: X-Private
+          value: "false"
+        - type: X-OASVersion
+          value: 3.0.0
+        - type: X-Notifications
+          value: "true"
+        - type: X-CreatedBy
+          value: username
+        items:
+          $ref: '#/definitions/ApisJsonProperty'
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+        example: alex
+        description: User name
+      active:
+        type: boolean
+        description: |
+          `true` means an existing user, `false` means the user is inactive (for example, deleted)
+    description: The user who added a comment
+  Comment:
+    type: object
+    required:
+    - body
+    - created
+    - id
+    - user
+    properties:
+      id:
+        type: string
+        example: 141b0adb-f26a-438b-be78-906445c91a36
+        description: The unique ID of the comment
+      user:
+        $ref: '#/definitions/User'
+      created:
+        type: string
+        format: date-time
+        description: The UTC date and time when the comment was added
+      modified:
+        type: string
+        format: date-time
+        description: The UTC date and time the when the comment was last edited
+      body:
+        type: string
+        description: Markdown contents of the comment
+  ClosableComment:
+    allOf:
+    - $ref: '#/definitions/Comment'
+    - type: object
+      properties:
+        position:
+          type: integer
+          format: int32
+          description: |
+            The line number (zero-based) the comment is associated with. For example, if the comment is on line 7 in the editor, `position`=6.
+        status:
+          type: string
+          description: Comment status
+          enum:
+          - OPEN
+          - RESOLVED
+        replies:
+          type: array
+          description: A list of replies to this comment
+          items:
+            $ref: '#/definitions/Comment'
+  NewComment:
+    type: object
+    required:
+    - body
+    - position
+    properties:
+      position:
+        type: integer
+        format: int32
+        minimum: 0
+      body:
+        type: string
+      replies:
+        type: array
+        items:
+          $ref: '#/definitions/NewReply'
+  NewReply:
+    type: object
+    required:
+    - body
+    properties:
+      body:
+        type: string
+  CommentPatch:
+    type: object
+    properties:
+      body:
+        type: string
+  ClosableCommentPatch:
+    allOf:
+    - $ref: '#/definitions/CommentPatch'
+    - type: object
+      properties:
+        position:
+          type: integer
+          format: int32
+          minimum: 0
+  CommentsBatch:
+    type: object
+    properties:
+      addComment:
+        type: array
+        items:
+          $ref: '#/definitions/NewComment'
+      updateComment:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/ClosableCommentPatch'
+      updateStatus:
+        type: object
+        additionalProperties:
+          type: string
+          enum:
+          - OPEN
+          - RESOLVED
+      deleteComment:
+        type: array
+        items:
+          type: string
+      addReply:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/definitions/NewReply'
+      updateReply:
+        type: object
+        additionalProperties:
+          type: object
+          additionalProperties:
+            $ref: '#/definitions/CommentPatch'
+      deleteReply:
+        type: object
+        additionalProperties:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+  Collaboration:
+    type: object
+    properties:
+      owner:
+        type: string
+        readOnly: true
+      owners:
+        type: array
+        items:
+          type: string
+      hint:
+        $ref: '#/definitions/CollaborationHint'
+      members:
+        type: array
+        items:
+          $ref: '#/definitions/CollaborationMembership'
+      pendingMembers:
+        type: array
+        items:
+          $ref: '#/definitions/CollaborationMembership'
+      teams:
+        type: array
+        items:
+          $ref: '#/definitions/CollaborationTeamMembership'
+  CollaborationTeamMembership:
+    allOf:
+    - $ref: '#/definitions/CollaborationMembership'
+    - type: object
+      properties:
+        members:
+          type: array
+          items:
+            $ref: '#/definitions/CollaborationMember'
+  CollaborationHint:
+    type: object
+    required:
+    - type
+    properties:
+      type:
+        type: string
+        format: uuid
+        description: Type identifier of the managed entity
+    description: Unused; reserved for future use.
+  CollaborationMembership:
+    allOf:
+    - $ref: '#/definitions/CollaborationMember'
+    - type: object
+      required:
+      - roles
+      properties:
+        roles:
+          type: array
+          items:
+            type: string
+            enum:
+            - EDIT
+            - COMMENT
+            - VIEW
+        donotdisturb:
+          type: boolean
+          readOnly: true
+        blocked:
+          type: boolean
+          readOnly: true
+  CollaborationMember:
+    type: object
+    required:
+    - name
+    properties:
+      uuid:
+        type: string
+        readOnly: true
+      name:
+        type: string
+      title:
+        type: string
+        readOnly: true
+      startTime:
+        type: string
+        format: date-time
+        readOnly: true
+  DefaultVersion:
+    type: object
+    required:
+    - version
+    properties:
+      version:
+        type: string
+        example: 1.0.0
+        description: Version identifier (case-insensitive)
+  NewVersion:
+    type: object
+    required:
+    - version
+    properties:
+      version:
+        type: string
+        example: 1.0.1
+        description: The version identifier for the new version
+        minLength: 1
+      private:
+        type: boolean
+        example: false
+        description: Whether the new version should be public (`false`) or private (`true`)
+  ForkVersion:
+    type: object
+    required:
+    - name
+    - owner
+    - version
+    properties:
+      owner:
+        type: string
+        example: acme
+        description: The account to fork into. Can be an organization or user name. Case-sensitive. The authenticated user must have permissions to create definitions in this account.
+        minLength: 3
+      name:
+        type: string
+        example: api-fork
+        description: The name for the forked definition. Must follow the [naming rules](https://app.swaggerhub.com/help/apis/creating-api). Can be the name of an existing definition, in which case the fork will become a new version in that definition, unless that version already exists.
+        minLength: 3
+        maxLength: 60
+      version:
+        type: string
+        example: 1.0.0
+        description: Version identifier for the forked definition. Must follow the [naming rules](https://app.swaggerhub.com/help/apis/versioning#format). If forking into an existing definition, this version must not already exist.
+        minLength: 1
+      project:
+        type: string
+        description: If forking into an organization, you can optionally specify an existing project to add the forked definition to.
+        minLength: 1
+      private:
+        type: boolean
+        description: Whether the forked version should be public (`false`) or private (`true`). If the value is not set, the original version's setting will be used.
+  LifecycleSettings:
+    type: object
+    properties:
+      published:
+        type: boolean
+        description: Whether the definition is published (`true`) or unpublished (`false`)
+  VisibilitySettings:
+    type: object
+    required:
+    - private
+    properties:
+      private:
+        type: boolean
+        description: Whether the definition version is private (`true`) or public (`false`)
+  ValidationResult:
+    type: object
+    properties:
+      validation:
+        type: array
+        description: An array of standardization issues
+        items:
+          $ref: '#/definitions/ValidationErrors'
+  ValidationErrors:
+    type: object
+    required:
+    - description
+    - line
+    properties:
+      line:
+        type: integer
+        example: 5
+        description: The line number (0-based) where the issue occurs. If, for some reason, the broken rule does not include a line number, defaults to 0.
+        minimum: 0
+      description:
+        type: string
+        example: OperationId must be present and non-empty string
+        description: The error message
+      severity:
+        type: string
+        description: 'The issue type: `CRITICAL` (error) or `WARNING`'
+        enum:
+        - CRITICAL
+        - WARNING
+    description: Represents a [standardization](https://app.swaggerhub.com/help/organizations/api-standardization) error or warning
+  IntegrationConfiguration:
+    type: object
+    required:
+    - name
+    properties:
+      name:
+        type: string
+        example: Java client
+        description: The display name of the integration. Must be unique among all integrations configured for the given API version.
+      enabled:
+        type: boolean
+        description: Whether the integration is enabled or disabled.
+        default: true
+    description: Common configuration details required to create an integration using the `POST /apis/{owner}/{api}/{version}/integrations` endpoint
+  AutoMockingIntegration:
+    allOf:
+    - $ref: '#/definitions/IntegrationConfiguration'
+    - type: object
+      required:
+      - configType
+      properties:
+        configType:
+          type: string
+          description: Integration type.
+          enum:
+          - API_AUTO_MOCKING
+        defaultResponseType:
+          type: string
+          description: Response content type that the mock server will return if no `Accept` header is specified.
+          default: application/json
+          enum:
+          - application/json
+          - application/xml
+          - application/yaml
+        token:
+          type: string
+          description: (For private APIs only.) An arbitrary bearer token that the users will need to send in requests to the mock server.
+        modify:
+          type: boolean
+          description: Whether to update the `host`/`servers` in the API definition to point to the mock server. `modify`=`true` can only be used if the API is _unpublished_.
+          default: true
+    description: Configuration details used to create an [API Auto Mocking](https://app.swaggerhub.com/help/integrations/api-auto-mocking) integration.
+  WebhookIntegration:
+    allOf:
+    - $ref: '#/definitions/IntegrationConfiguration'
+    - type: object
+      required:
+      - configType
+      - contentType
+      - url
+      properties:
+        configType:
+          type: string
+          description: Integration type.
+          enum:
+          - WEBHOOK
+        url:
+          type: string
+          format: uri
+          example: https://example.com:8443/swaggerhub-webhook
+          description: The URL to send the webhook to.
+        contentType:
+          type: string
+          description: Webhook content type.
+          enum:
+          - application/json
+          - application/x-www-form-urlencoded
+        lifeCycleEvents:
+          type: array
+          description: Events that will trigger the webhook.
+          items:
+            type: string
+            enum:
+            - API_SAVED
+            - API_PUBLISHED
+        additionalHeaders:
+          type: array
+          description: 'Custom HTTP headers to be sent with the webhook. Use the "name: value" format for each header.'
+          items:
+            type: string
+            example: 'Authorization: Bearer abcd12345'
+    description: Configuration details used to create a [webhook](https://app.swaggerhub.com/help/integrations/webhook).
+  SCMIntegrationConfiguration:
+    allOf:
+    - $ref: '#/definitions/IntegrationConfiguration'
+    - type: object
+      required:
+      - branch
+      - outputFolder
+      - repository
+      - syncMethod
+      - target
+      properties:
+        branch:
+          type: string
+          example: develop
+          description: |
+            The branch to synchronize to. If it does not exist in the repository, it will be created based on the default branch. Branch name must not contain whitespace characters.
+        repository:
+          type: string
+          example: petstore
+          description: The repository to synchronize with.
+        outputFile:
+          type: string
+          example: openapi.yaml
+          description: If `target` is "YAML (Resolved)", "YAML (Unresolved)", "JSON (Resolved)", or "JSON (Unresolved)", this is file name for the generated definition.
+        target:
+          type: string
+          example: java
+          description: |
+            The type of code to generate and push to the repository. For the possible values, start creating any source control integration manually and check the "Generated API Code" values. Note that the available codegens for OAS2 and OAS3 vary.
+        syncMethod:
+          type: string
+          description: |
+            "Basic Sync" or "Advanced Sync". Basic Sync will manage all files and folders in the branch. Advanced Sync allows you to define which files and folders will be managed by SwaggerHub.
+            Note: If "Advanced Sync" is used, you must specify either `providedPaths` or `managedPaths`.
+          enum:
+          - Basic Sync
+          - Advanced Sync
+        outputFolder:
+          type: string
+          example: sdk/java
+          description: |
+            The output folder for the generated code or definition, relative to the repository root. If this folder does not exist, it will be created. If the output folder is not specified, SwaggerHub will create files and folders in the repository root.
+            Use forward slashes `/` as path separators, but do not add `/` at the beginning.
+        providedPaths:
+          type: array
+          example:
+          - '*'
+          description: |
+            Partially Managed Paths: These files and folders will be created only if they do not exist. Existing files will not be modified.
+            Paths are relative to the `outputFolder`. Use forward slashes `/` as folder separators, but do not add `/` at the beginning of the paths.
+            `*` means all files in the `outputFolder`.
+          items:
+            type: string
+        ignoredPaths:
+          type: array
+          example: []
+          description: |
+            Ignored Paths: These files and folders (if exist) will remain as is and will not be changed in any way.
+            Paths are relative to the `outputFolder`. Use forward slashes `/` as folder separators, but do not add `/` at the beginning of the paths.
+          items:
+            type: string
+        managedPaths:
+          type: array
+          example: []
+          description: "Fully Managed Paths: These files and folders will be completely managed by the integration. New files will be added, the existing files will be overwritten, and the files that are no longer used will be deleted. \nPaths are relative to the `outputFolder`. Use forward slashes `/` as folder separators, but do not add `/` at the beginning of the paths.\n`*` means all files in the `outputFolder`.\n"
+          items:
+            type: string
+    description: Common configuration details used to create source control integrations
+  AzureDevopsServicesIntegration:
+    allOf:
+    - $ref: '#/definitions/SCMIntegrationConfiguration'
+    - type: object
+      required:
+      - configType
+      - organization
+      - personalAccessToken
+      - project
+      properties:
+        configType:
+          type: string
+          description: Integration type.
+          enum:
+          - AZURE_DEVOPS_SERVICES
+        organization:
+          type: string
+          example: my-org
+          description: The Azure DevOps organization that contains the target repository.
+        personalAccessToken:
+          type: string
+          format: password
+          description: |
+            A [personal access token](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=preview-page#create-a-pat) for accessing the target repository. The token must have the _Code > Read & write_ scope.
+        project:
+          type: string
+          example: Petstore 2.0
+          description: Team Project which contains the target repository.
+    description: Configuration details used to create an Azure DevOps Services integration
+  BitbucketCloudIntegration:
+    allOf:
+    - $ref: '#/definitions/SCMIntegrationConfiguration'
+    - type: object
+      required:
+      - configType
+      - owner
+      - password
+      - username
+      properties:
+        configType:
+          type: string
+          description: Integration type.
+          enum:
+          - BITBUCKET_CLOUD
+        username:
+          type: string
+          example: service_user
+          description: Bitbucket username to authenticate with.
+        password:
+          type: string
+          format: password
+          description: |
+            Bitbucket [app password](https://support.atlassian.com/bitbucket-cloud/docs/app-passwords/) to authenticate with. This app password must correspond to the `username` account and have the following permissions:
+
+             * Account: Email, Read
+             * Repositories: Read, Write
+        owner:
+          type: string
+          description: The owner of the Bitbucket repository to synchronize with.
+    description: Configuration details used to create a Bitbucket Cloud integration
+  BitbucketServerIntegration:
+    allOf:
+    - $ref: '#/definitions/SCMIntegrationConfiguration'
+    - type: object
+      required:
+      - configType
+      - host
+      - owner
+      - password
+      - username
+      properties:
+        configType:
+          type: string
+          description: Integration type.
+          enum:
+          - BITBUCKET_SERVER
+        host:
+          type: string
+          example: https://bitbucket.example.com
+          description: The Bitbucket Server host to connect to. Make sure to include `http://` or `https://` at the beginning.
+        username:
+          type: string
+          example: service_user
+          description: Bitbucket username to authenticate with.
+        password:
+          type: string
+          format: password
+          description: 'A [personal access token](https://app.swaggerhub.com/help/integrations/bitbucket-server-sync#token) for accessing the target Bitbucket Server repository. This token must have permissions for _Projects: Read_ and _Repositories: Write_.'
+        owner:
+          type: string
+          example: myOrg
+          description: The owner of the repository to synchronize with.
+    description: Configuration details used to create a Bitbucket Server integration
+  GitHubIntegration:
+    allOf:
+    - $ref: '#/definitions/SCMIntegrationConfiguration'
+    - type: object
+      required:
+      - configType
+      - owner
+      - token
+      properties:
+        configType:
+          type: string
+          description: Integration type.
+          enum:
+          - GITHUB
+        token:
+          type: string
+          format: password
+          description: |
+            A personal access token for accessing the target GitHub repository. You can generate tokens here: https://github.com/settings/tokens. The token must have the _public_repo_ scope if the target repository is public, or the _repo_ scope if it is private.
+        owner:
+          type: string
+          example: myOrg
+          description: The owner of the GitHub repository to synchronize with.
+    description: Configuration details used to create a GitHub.com integration
+  GitHubEnterpriseIntegration:
+    allOf:
+    - $ref: '#/definitions/SCMIntegrationConfiguration'
+    - type: object
+      required:
+      - configType
+      - host
+      - owner
+      - token
+      properties:
+        configType:
+          type: string
+          description: Integration type.
+          enum:
+          - GITHUB_ENTERPRISE
+        host:
+          type: string
+          example: https://github.mycompany.com
+          description: The GitHub Enterprise host to connect to. Make sure to include `http://` or `https://` at the beginning.
+        token:
+          type: string
+          format: password
+          description: |
+            A [personal access token](https://docs.github.com/en/enterprise/user/github/authenticating-to-github/creating-a-personal-access-token) for accessing the target repository. The token must have the _public_repo_ scope if the target repository is public, or the _repo_ scope if it is private.
+        owner:
+          type: string
+          example: myOrg
+          description: The owner of the repository to synchronize with.
+    description: Configuration details used to create a GitHub Enterprise integration
+  GitLabIntegration:
+    allOf:
+    - $ref: '#/definitions/SCMIntegrationConfiguration'
+    - type: object
+      required:
+      - configType
+      - owner
+      - personalAccessToken
+      properties:
+        configType:
+          type: string
+          description: Integration type.
+          enum:
+          - GITLAB
+        host:
+          type: string
+          description: The GitLab host to connect to. Make sure to include `https://` or `http://` at the beginning.
+          default: https://gitlab.com
+        personalAccessToken:
+          type: string
+          format: password
+          description: |
+            A personal access token for accessing the target repository. The token must have the _api_ scope.
+        owner:
+          type: string
+          example: myOrg
+          description: The owner of the repository to synchronize with.
+    description: Configuration details used to create a GitLab integration
+  Project:
+    type: object
+    properties:
+      name:
+        type: string
+        example: API Project
+        description: Project name
+      description:
+        type: string
+        example: Project description
+        description: Project description
+        default: ""
+      apis:
+        type: array
+        example:
+        - petstore
+        description: |
+          A list of APIs included in this project. The APIs must belong to the same owner as the project. API names are case-sensitive.
+        items:
+          type: string
+          description: API name (case-sensitive)
+      domains:
+        type: array
+        example:
+        - common-models
+        description: |
+          A list of domains included in this project. The domains must belong to the same owner as the project. Domain names are case-sensitive.
+        items:
+          type: string
+          description: Domain name (case-sensitive)
+  ProjectsJson:
+    type: object
+    properties:
+      offset:
+        type: integer
+        format: int32
+        example: 0
+      totalCount:
+        type: integer
+        format: int64
+        example: 1
+      projects:
+        type: array
+        items:
+          $ref: '#/definitions/Project'
+  ProjectMemberList:
+    type: object
+    properties:
+      members:
+        type: array
+        example:
+        - name: alex
+          type: USER
+        - name: core-developers
+          type: TEAM
+        items:
+          $ref: '#/definitions/ProjectMember'
+  ProjectMember:
+    type: object
+    required:
+    - name
+    - type
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+        default: USER
+        enum:
+        - USER
+        - TEAM
+      roles:
+        type: array
+        readOnly: true
+        items:
+          type: string
+          enum:
+          - MEMBER
+          - OWNER
+parameters:
+  apiOwner:
+    name: owner
+    in: path
+    description: API owner (user or organization, case-sensitive)
+    required: true
+    type: string
+  domainOwner:
+    name: owner
+    in: path
+    description: Domain owner (user or organization, case-sensitive)
+    required: true
+    type: string
+  api:
+    name: api
+    in: path
+    description: API name (case-sensitive)
+    required: true
+    type: string
+  domain:
+    name: domain
+    in: path
+    description: Domain name (case-sensitive)
+    required: true
+    type: string
+  version:
+    name: version
+    in: path
+    description: Version identifier (case-sensitive)
+    required: true
+    type: string
+  versionToClone:
+    name: version
+    in: path
+    description: The version to clone (case-sensitive)
+    required: true
+    type: string
+  query:
+    name: query
+    in: query
+    description: Free text query to match
+    required: false
+    type: string
+  state:
+    name: state
+    in: query
+    description: |
+      Matches against published state of the spec:
+      * UNPUBLISHED - spec is a draft, a work in progress
+      * PUBLISHED - spec is a stable version ready for consuming from client applications
+      * ANY - either PUBLISHED or UNPUBLISHED
+    required: false
+    type: string
+    default: ALL
+    enum:
+    - ALL
+    - PUBLISHED
+    - UNPUBLISHED
+  page:
+    name: page
+    in: query
+    description: Page to return
+    required: false
+    type: integer
+    default: 0
+    format: int32
+  limit:
+    name: limit
+    in: query
+    description: Number of results per page (1 .. 100)
+    required: false
+    type: integer
+    default: 10
+    maximum: 100
+    format: int32
+  sort:
+    name: sort
+    in: query
+    description: |
+      Sort criteria of result set:
+      * NAME
+      * UPDATED
+      * CREATED
+      * OWNER
+      * BEST_MATCH - by relevance
+      * TITLE - by `info.title`
+    required: false
+    type: string
+    default: NAME
+    enum:
+    - NAME
+    - UPDATED
+    - CREATED
+    - OWNER
+    - BEST_MATCH
+    - TITLE
+  order:
+    name: order
+    in: query
+    description: Sort order
+    required: false
+    type: string
+    default: ASC
+    enum:
+    - ASC
+    - DESC
+  resolved:
+    name: resolved
+    in: query
+    description: Set to true to get the resolved version of the API definition. The content of all external $refs will be included in the resulting file.
+    required: false
+    type: boolean
+    default: false
+  flatten:
+    name: flatten
+    in: query
+    description: Used only if `resolved`=`true`. Flattening replaces all complex inline schemas with named entries in the `components/schemas` or `definitions` section.
+    required: false
+    type: boolean
+    default: false
+  lifecycleSettingsBody:
+    in: body
+    name: settings
+    description: 'An object that specifies the new `published` state: `true` means published, `false` - unpublished'
+    required: true
+    schema:
+      $ref: '#/definitions/LifecycleSettings'
+  visibilitySettingsBody:
+    in: body
+    name: settings
+    description: 'An object that specifies the new visibility level: `true` means private, `false` - public'
+    required: true
+    schema:
+      $ref: '#/definitions/VisibilitySettings'
+  comment:
+    name: comment
+    in: path
+    description: Comment identifier
+    required: true
+    type: string
+  commentStatus:
+    name: status
+    in: path
+    description: Comment status
+    required: true
+    type: string
+    enum:
+    - OPEN
+    - RESOLVED
+  reply:
+    name: reply
+    in: path
+    description: Reply identifier
+    required: true
+    type: string
+  newVersion:
+    in: body
+    name: newVersion
+    description: An object that contains the new version number and other parameters. The version number must be in the format described in the [documentation](https://app.swaggerhub.com/help/apis/versioning#format).
+    required: true
+    schema:
+      $ref: '#/definitions/NewVersion'
+  newName:
+    name: newName
+    in: query
+    description: New name
+    required: true
+    type: string
+    maxLength: 60
+    minLength: 3
+  projectOwner:
+    name: owner
+    in: path
+    description: Organization name (case-sensitive)
+    required: true
+    type: string
+  projectId:
+    name: projectId
+    in: path
+    description: Project name (case-sensitive)
+    required: true
+    type: string
+  projectSort:
+    name: sort
+    in: query
+    description: |
+      Sort criteria or result set:
+      * NAME
+      * OWNER
+    required: false
+    type: string
+    default: NAME
+    enum:
+    - NAME
+    - OWNER
+  projectMemberList:
+    in: body
+    name: projectMemberList
+    description: A list of users and teams to add to the project
+    required: true
+    schema:
+      $ref: '#/definitions/ProjectMemberList'
+  projectRequest:
+    in: body
+    name: projectRequest
+    description: |
+      The project data. Properties that are not provided are set to empty values.
+    required: true
+    schema:
+      $ref: '#/definitions/Project'
+  nameOnly:
+    name: nameOnly
+    in: query
+    description: Return the project information excluding APIs and domains
+    required: false
+    type: boolean
+    default: false
+responses:
+  BadRequest:
+    description: The request body was invalid
+  Unauthorized:
+    description: Access token is not set or invalid
+  ApiNotFound:
+    description: The specified API was not found
+  DomainNotFound:
+    description: The specified domain was not found
+  ApiCommentNotFound:
+    description: The specified API or comment was not found
+  DomainCommentNotFound:
+    description: The specified domain or comment was not found
+  ApiCommentReplyNotFound:
+    description: The specified API, comment, or reply was not found
+  DomainCommentReplyNotFound:
+    description: The specified domain, comment, or reply was not found
+  CommentForbidden:
+    description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
