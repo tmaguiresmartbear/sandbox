@@ -1212,49 +1212,6 @@ paths:
           description: The specified API, comment, or reply was not found
       security:
       - TokenSecured: []
-  /apis/{owner}/{api}/{version}/.comment:
-    get:
-      tags:
-      - APIs
-      summary: Get comments for the specified API version
-      description: |-
-        **Deprecated.** Use `GET /apis/{owner}/{api}/{version}/comments` instead.
-        Returns all the comments and replies added by collaborators in the specified API version.
-      operationId: getApiComments
-      parameters:
-      - name: owner
-        in: path
-        description: API owner (user or organization, case-sensitive)
-        required: true
-        type: string
-      - name: api
-        in: path
-        description: API name (case-sensitive)
-        required: true
-        type: string
-      - name: version
-        in: path
-        description: Version identifier (case-sensitive)
-        required: true
-        type: string
-      responses:
-        "200":
-          description: A list of comments for the specified API version
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/ClosableComment'
-        "204":
-          description: No comments were found for the specified API version
-        "401":
-          description: The access token is missing or invalid
-        "403":
-          description: Access denied (insufficient user permissions)
-        "404":
-          description: The specified API or version was not found
-      security:
-      - TokenSecured: []
-      deprecated: true
   /apis/{owner}/{api}/settings/default:
     get:
       tags:
