@@ -1,8 +1,8 @@
 ---
 swagger: "2.0"
 info:
-  description: "# Introduction\n Change this in front of Ali.  \n\nThis is the registry API for SwaggerHub. It allows you to access, manage, and update your APIs and Domains in SwaggerHub bypassing the web interface.\n# Authentication\nUse your personal API Key: you can find it by visiting the [API Key page](https://app.swaggerhub.com/settings/apiKey).\n# Tools\nIn addition to calling the Registry API directly, you can use these tools to interact with the API from the command line or CI/CD pipeline:\n\n * [SwaggerHub CLI](https://www.npmjs.com/package/swaggerhub-cli) \n * [Maven plugin](https://github.com/swagger-api/swaggerhub-maven-plugin)\n * [Gradle plugin](https://github.com/swagger-api/swaggerhub-gradle-plugin)\n"
-  version: 1.0.59
+  description: "# Introduction\nThis is the registry API for SwaggerHub. It allows you to access, manage, and update your APIs and Domains in SwaggerHub bypassing the web interface.\n# Authentication\nUse your personal API Key: you can find it by visiting the [API Key page](https://app.swaggerhub.com/settings/apiKey).\n# Tools\nIn addition to calling the Registry API directly, you can use these tools to interact with the API from the command line or CI/CD pipeline:\n\n * [SwaggerHub CLI](https://www.npmjs.com/package/swaggerhub-cli) \n * [Maven plugin](https://github.com/swagger-api/swaggerhub-maven-plugin)\n * [Gradle plugin](https://github.com/swagger-api/swaggerhub-gradle-plugin)\n"
+  version: 1.0.60
   title: SwaggerHub Registry API
   contact:
     name: SwaggerHub
@@ -13,11 +13,11 @@ tags:
 - name: APIs
   description: Manage your API definitions
 - name: Domains
-  description: Manage your [domains](https://app.swaggerhub.com/help/domains/index)
+  description: Manage your [domains](https://support.smartbear.com/swaggerhub/docs/domains/)
 - name: Projects
-  description: Manage your organization's [projects](https://app.swaggerhub.com/help/organizations/projects/index)
+  description: Manage your organization's [projects](https://support.smartbear.com/swaggerhub/docs/organizations/projects/)
 - name: Integrations
-  description: Create and configure [integrations](https://app.swaggerhub.com/help/integrations/index) programmatically
+  description: Create and configure [integrations](https://support.smartbear.com/swaggerhub/docs/integrations/) programmatically
 schemes:
 - https
 produces:
@@ -308,7 +308,7 @@ paths:
       tags:
       - APIs
       summary: Create or update an API
-      description: "Use this operation to create a new API or update an existing API by uploading its OpenAPI definition in YAML or JSON format. The authenticating user must have permissions to create or update APIs in the specified `owner` account.\n\nThe API name and version must follow SwaggerHub naming rules, otherwise the request will be rejected. Refer to:\n \n * [API name format](https://app.swaggerhub.com/help/apis/creating-api)\n * [Version format](https://app.swaggerhub.com/help/apis/versioning#format)\n\n\nWhen a new version of an existing API is created, it is not automatically made the default version. You can use `PUT /apis/{owner}/{api}/.meta` to set the default version.\n\n### cURL example\nLine breaks are added for readability.\n\n    curl -X POST \"https://api.swaggerhub.com/apis/OWNER/API_TO_CREATE_OR_UPDATE\"\n         -H \"Authorization: SWAGGERHUB_API_KEY\"\n         -H \"Content-Type: application/yaml\"\n         --data-binary @C:\\work\\swagger.yaml\n\n**Note:** Use `--data-binary` (not `-d`) when uploading YAML files using cURL, and remember to specify the correct `Content-Type` header."
+      description: "Use this operation to create a new API or update an existing API by uploading its OpenAPI definition in YAML or JSON format. The authenticating user must have permissions to create or update APIs in the specified `owner` account.\n\nThe API name and version must follow SwaggerHub naming rules, otherwise the request will be rejected. Refer to:\n \n * [API name format](https://support.smartbear.com/swaggerhub/docs/apis/creating-api.html)\n * [Version format](https://support.smartbear.com/swaggerhub/docs/apis/versioning.html#format)\n\n\nWhen a new version of an existing API is created, it is not automatically made the default version. You can use `PUT /apis/{owner}/{api}/.meta` to set the default version.\n\n### cURL example\nLine breaks are added for readability.\n\n    curl -X POST \"https://api.swaggerhub.com/apis/OWNER/API_TO_CREATE_OR_UPDATE\"\n         -H \"Authorization: SWAGGERHUB_API_KEY\"\n         -H \"Content-Type: application/yaml\"\n         --data-binary @C:\\work\\swagger.yaml\n\n**Note:** Use `--data-binary` (not `-d`) when uploading YAML files using cURL, and remember to specify the correct `Content-Type` header."
       operationId: saveDefinition
       consumes:
       - application/json
@@ -370,7 +370,7 @@ paths:
         "400":
           description: The specified OpenAPI definition is invalid
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Maximum number of APIs reached
         "404":
@@ -413,7 +413,7 @@ paths:
       tags:
       - APIs
       summary: Rename an API
-      description: The new name must follow the [naming rules](https://app.swaggerhub.com/help/apis/creating-api).
+      description: The new name must follow the [naming rules](https://support.smartbear.com/swaggerhub/docs/apis/creating-api.html).
       operationId: renameApi
       parameters:
       - name: owner
@@ -437,7 +437,7 @@ paths:
         "200":
           description: The API was successfully renamed
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Access denied (insufficient user permissions)
         "404":
@@ -618,7 +618,7 @@ paths:
       tags:
       - APIs
       summary: Fork an API
-      description: Creates a [fork](https://app.swaggerhub.com/help/apis/forking-api) of the specified API definition and version. The fork can be created as a new API, or as a new version in another existing API.
+      description: Creates a [fork](https://support.smartbear.com/swaggerhub/docs/apis/forking-api.html) of the specified API definition and version. The fork can be created as a new API, or as a new version in another existing API.
       operationId: forkApi
       parameters:
       - name: owner
@@ -648,7 +648,7 @@ paths:
         "400":
           description: Some parameters are missing or invalid
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Access denied
         "404":
@@ -685,7 +685,7 @@ paths:
         type: string
       - in: body
         name: newVersion
-        description: An object that contains the new version number and other parameters. The version number must be in the format described in the [documentation](https://app.swaggerhub.com/help/apis/versioning#format).
+        description: An object that contains the new version number and other parameters. The version number must be in the format described in the [documentation](https://support.smartbear.com/swaggerhub/docs/apis/versioning.html#format).
         required: true
         schema:
           $ref: '#/definitions/NewVersion'
@@ -849,7 +849,7 @@ paths:
         "204":
           description: No comments were found for the specified API
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -890,7 +890,7 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -930,7 +930,7 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -968,7 +968,7 @@ paths:
         "200":
           description: Comment was deleted
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -1014,7 +1014,7 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -1062,7 +1062,7 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -1111,7 +1111,7 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -1154,7 +1154,7 @@ paths:
         "200":
           description: Сomment reply was deleted
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -1205,13 +1205,56 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
           description: The specified API, comment, or reply was not found
       security:
       - TokenSecured: []
+  /apis/{owner}/{api}/{version}/.comment:
+    get:
+      tags:
+      - APIs
+      summary: Get comments for the specified API version
+      description: |-
+        **Deprecated.** Use `GET /apis/{owner}/{api}/{version}/comments` instead.
+        Returns all the comments and replies added by collaborators in the specified API version.
+      operationId: getApiComments
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: A list of comments for the specified API version
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ClosableComment'
+        "204":
+          description: No comments were found for the specified API version
+        "401":
+          description: The `Authorization` header is missing or contains an invalid API key
+        "403":
+          description: Access denied (insufficient user permissions)
+        "404":
+          description: The specified API or version was not found
+      security:
+      - TokenSecured: []
+      deprecated: true
   /apis/{owner}/{api}/settings/default:
     get:
       tags:
@@ -1270,7 +1313,7 @@ paths:
         "200":
           description: The default version was successfully changed
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Access denied (insufficient user permissions)
         "404":
@@ -1305,7 +1348,7 @@ paths:
           schema:
             $ref: '#/definitions/LifecycleSettings'
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "404":
           description: The specified API or version was not found
       security:
@@ -1349,9 +1392,9 @@ paths:
         "200":
           description: Successfully published or unpublished the API
         "400":
-          description: The API definition contains [standardization](https://app.swaggerhub.com/help/organizations/api-standardization) errors which prevent it from being published.
+          description: The API definition contains [standardization](https://support.smartbear.com/swaggerhub/docs/organizations/api-standardization.html) errors which prevent it from being published.
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Access denied (insufficient user permissions)
         "404":
@@ -1411,7 +1454,7 @@ paths:
           schema:
             $ref: '#/definitions/VisibilitySettings'
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "404":
           description: The specified API or version was not found
       security:
@@ -1449,7 +1492,7 @@ paths:
         "200":
           description: API visibility was updated
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Access denied (insufficient user permissions)
         "404":
@@ -1462,7 +1505,7 @@ paths:
       - APIs
       summary: Get API Standardization errors and warnings
       description: |-
-        If your organization has [API standardization](https://app.swaggerhub.com/help/organizations/api-standardization) configured, you can use this operation to validate a specific API version and get a list of errors or warnings with line numbers.
+        If your organization has [API standardization](https://support.smartbear.com/swaggerhub/docs/organizations/api-standardization.html) configured, you can use this operation to validate a specific API version and get a list of errors or warnings with line numbers.
 
         **Note:** This operation checks for standardization errors only and does not return OpenAPI syntax errors (such as misspelled keywords) or YAML syntax errors.
       operationId: getValidation
@@ -1497,6 +1540,67 @@ paths:
           description: Access denied
       security:
       - TokenSecured: []
+  /projects:
+    get:
+      tags:
+      - Projects
+      summary: Get all projects that a user has access to
+      description: Returns all projects that the authenticating user has access to. Organization owners get a list of all projects in owned organizations. Other members get a list of just the projects they are member of.
+      operationId: getUserProjects
+      produces:
+      - application/json
+      parameters:
+      - name: nameOnly
+        in: query
+        description: Return the project information excluding APIs and domains
+        required: false
+        type: boolean
+        default: false - DELETE
+      - name: page
+        in: query
+        description: Page to return
+        required: false
+        type: integer
+        default: 0
+        format: int32
+      - name: limit
+        in: query
+        description: Number of results per page (1 .. 100)
+        required: false
+        type: integer
+        default: 10
+        maximum: 100
+        format: int32
+      - name: sort
+        in: query
+        description: |
+          Sort criteria or result set:
+          * NAME
+          * OWNER
+        required: false
+        type: string
+        default: NAME
+        enum:
+        - NAME
+        - OWNER
+      - name: order
+        in: query
+        description: Sort order
+        required: false
+        type: string
+        default: ASC
+        enum:
+        - ASC
+        - DESC
+      responses:
+        "200":
+          description: All projects accessible to the current user
+          schema:
+            $ref: '#/definitions/ProjectsJson'
+        "401":
+          description: The `Authorization` header is missing or contains an invalid API key
+      security:
+      - TokenSecured: []
   /projects/{owner}:
     get:
       tags:
@@ -1516,7 +1620,7 @@ paths:
         description: Return the project information excluding APIs and domains
         required: false
         type: boolean
-        default: false
+        default: false - DELETE
       - name: page
         in: query
         description: Page to return
@@ -1580,7 +1684,7 @@ paths:
             application/json:
               error: Unable to create project. Some api or domain entries are invalid.
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Projects are not available in the organization's plan
         "404":
@@ -1614,7 +1718,7 @@ paths:
           schema:
             $ref: '#/definitions/Project'
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: |
             Projects are not available in the organization's plan, or you are not a member of the specified project
@@ -1661,7 +1765,7 @@ paths:
             application/json:
               error: Unable to save the project. Some API or domain names are invalid.
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: |
             Projects are not available in the organization's plan, or you are not a member of the specified project
@@ -1689,7 +1793,7 @@ paths:
         "204":
           description: The project has been deleted successfully
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Projects are not available in the organization's plan, or you are not a member of the specified project.
         "404":
@@ -1734,7 +1838,7 @@ paths:
         "200":
           description: The specified API or domain was successfully added to the project
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: |
             The projects feature is not available for the organization's plan, or the authenticating user does not have permissions to add definitions to this project
@@ -1769,7 +1873,7 @@ paths:
           schema:
             $ref: '#/definitions/ProjectMemberList'
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: |
             Projects are not available in the organization's plan, or you are not a member of the specified project.
@@ -1814,28 +1918,68 @@ paths:
       security:
       - TokenSecured: []
   /apis/{owner}/{api}/{version}/integrations:
+    get:
+      tags:
+      - Integrations
+      summary: Get all integrations configured for the specified API version
+      description: |-
+        The returned information includes integration types, names, unique IDs, and enabled/disabled status.
+
+        **Note:** The following integration types are currently not returned: Amazon API Gateway Lambda Sync, Apigee Edge, Azure API Management, IBM API Connect.
+      operationId: getIntegrations
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: An object that contains information about the configured integrations
+          schema:
+            $ref: '#/definitions/IntegrationConfigurations'
+        "401":
+          description: The `Authorization` header is missing or contains an invalid API key
+        "403":
+          description: The authenticating user does not have access to integrations in this API
+        "404":
+          description: The specified API or version was not found
+      security:
+      - TokenSecured: []
     post:
       tags:
       - Integrations
       summary: Create an integration for the specified API and version
       description: |-
-        Use this operation to add a source control integration, a [mock](https://app.swaggerhub.com/help/integrations/api-auto-mocking), or a [webhook](https://app.swaggerhub.com/help/integrations/webhook) for a specific API version. The integration type is determined by which object is provided in the request body (specifically, by the `configType` value).
+        Use this operation to configure an integration for a specific API version. The integration type is determined by which object is provided in the request body (specifically, by the `configType` value).
 
         For a list of fields that need to be provided in the request body, see the descriptions of the following objects in the "Models" section at the bottom of API docs:
 
+         * `AmazonApiGatewayIntegration`
+         * `AutoMockingIntegration`
+         * `AzureDevopsServicesIntegration`
+         * `BitbucketCloudIntegration`
+         * `BitbucketServerIntegration`
          * `GitHubIntegration`
          * `GitHubEnterpriseIntegration`
          * `GitLabIntegration`
-         * `BitbucketCloudIntegration`
-         * `BitbucketServerIntegration`
-         * `AzureDevopsServicesIntegration`
-         * `AutoMockingIntegration`
          * `WebhookIntegration`
 
-        Notes:
+        **Notes:**
           * The integration `name` must be unique among all integrations configured for the given API version.
-          * The operation does not validate the repository details and access tokens.
+          * If `target` is the YAMl/JSON definition, you must specify the `outputFile`.
           * If `syncMethod`=_Advanced Sync_, you must specify a non-empty list of either `providedPaths` or `managedPaths` (or both). If you are not sure which paths to use, use `providedPaths`=`["*"]`.
+          * The operation does not validate the repository details and access tokens.
       operationId: createIntegration
       consumes:
       - application/json
@@ -1859,8 +2003,23 @@ paths:
         type: string
       - in: body
         name: integrationTypeConfiguration
-        description: |
-          Can be one of the following objects: `GitHubIntegration`, `GitHubEnterpriseIntegration`, `GitLabIntegration`, `BitbucketCloudIntegration`, `BitbucketServerIntegration`, `AzureDevopsServicesIntegration`, `AutoMockingIntegration`, `WebhookIntegration`.
+        description: |-
+          Can be one of the following objects:
+
+          | `configType` value    | Object |
+          | --------------------- | ------ |
+          | AMAZON_API_GATEWAY    | AmazonApiGatewayIntegration |
+          | API_AUTO_MOCKING      | AutoMockingIntegration |
+          | AZURE_DEVOPS_SERVICES | AzureDevopsServicesIntegration |
+          | BITBUCKET_CLOUD       | BitbucketCloudIntegration |
+          | BITBUCKET_SERVER      | BitbucketServerIntegration |
+          | GITHUB                | GitHubIntegration |
+          | GITHUB_ENTERPRISE     | GitHubEnterpriseIntegration |
+          | GITLAB                | GitLabIntegration |
+          | WEBHOOK               | WebhookIntegration |
+
+          For more examples, see the JSON files in this repository:
+          https://github.com/SmartBear/swaggerhub-cli/tree/master/examples/integrations
         required: true
         schema:
           type: object
@@ -1885,15 +2044,266 @@ paths:
         "400":
           description: The integration configuration was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
-          description: Access denied
+          description: The authenticating user does not have permissions to create integrations in this API
         "404":
           description: The specified owner, API, or version was not found
         "409":
           description: An integration with this name already exists in this API
         "415":
           description: Invalid content type
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/integrations/{integrationId}:
+    get:
+      tags:
+      - Integrations
+      summary: Get integration settings
+      description: Returns the configuration of the specified integration. Access tokens and passwords are not returned for security reasons.
+      operationId: getIntegrationById
+      consumes:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: integrationId
+        in: path
+        description: Integration ID (case-sensitive). To get the available integration IDs, use `GET /apis/{owner}/{api}/{version}/integrations`
+        required: true
+        type: string
+        format: uuid
+      responses:
+        "200":
+          description: |
+            Can be one of the following objects: `AmazonApiGatewayIntegration`, `AutoMockingIntegration`, `AzureDevopsServicesIntegration`, `BitbucketCloudIntegration`, `BitbucketServerIntegration`, `GitHubIntegration`, `GitHubEnterpriseIntegration`, `GitLabIntegration`, or `WebhookIntegration`
+          schema:
+            type: object
+            example:
+              configType: GITHUB
+              name: Java client SDK
+              owner: myOrg
+              repository: petstore
+              branch: develop
+              target: java
+              syncMethod: Advanced Sync
+              outputFolder: sdk/java
+              providedPaths:
+              - '*'
+              managedPaths: []
+              ignoredPaths: []
+              enabled: true
+        "401":
+          description: The `Authorization` header is missing or contains an invalid API key
+        "403":
+          description: The authenticating user does not have access to integrations in this API
+        "404":
+          description: The specified owner, API, version, or integration ID was not found
+      security:
+      - TokenSecured: []
+    put:
+      tags:
+      - Integrations
+      summary: Update integration settings
+      description: |-
+        Updates integration settings for the specified API and integration ID. The integration type is determined by which object is passed in the request body.
+
+        For a list of fields that need to be provided in the request body, see the descriptions of the following objects in the "Models" section at the bottom of API docs:
+
+         * `AmazonApiGatewayIntegration`
+         * `AutoMockingIntegration`
+         * `AzureDevopsServicesIntegration`
+         * `BitbucketCloudIntegration`
+         * `BitbucketServerIntegration`
+         * `GitHubIntegration`
+         * `GitHubEnterpriseIntegration`
+         * `GitLabIntegration`
+         * `WebhookIntegration`
+
+        **Notes:**
+          * The integration `name` must be unique among all integrations configured for the given API version.
+          * If `target` is the YAMl/JSON definition, you must specify the `outputFile`.
+          * If `syncMethod`=_Advanced Sync_, you must specify a non-empty list of either `providedPaths` or `managedPaths` (or both). If you are not sure which paths to use, use `providedPaths`=`["*"]`.
+          * The operation does not validate the repository details and access tokens.
+      operationId: updateIntegration
+      consumes:
+      - application/json
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: integrationId
+        in: path
+        description: Integration ID (case-sensitive). To get the available integration IDs, use `GET /apis/{owner}/{api}/{version}/integrations`
+        required: true
+        type: string
+        format: uuid
+      - in: body
+        name: integrationTypeConfiguration
+        description: |-
+          Can be one of the following objects:
+
+          | `configType` value    | Object |
+          | --------------------- | ------ |
+          | AMAZON_API_GATEWAY    | AmazonApiGatewayIntegration |
+          | API_AUTO_MOCKING      | AutoMockingIntegration |
+          | AZURE_DEVOPS_SERVICES | AzureDevopsServicesIntegration |
+          | BITBUCKET_CLOUD       | BitbucketCloudIntegration |
+          | BITBUCKET_SERVER      | BitbucketServerIntegration |
+          | GITHUB                | GitHubIntegration |
+          | GITHUB_ENTERPRISE     | GitHubEnterpriseIntegration |
+          | GITLAB                | GitLabIntegration |
+          | WEBHOOK               | WebhookIntegration |
+
+          For more examples, see the JSON files in this repository:
+          https://github.com/SmartBear/swaggerhub-cli/tree/master/examples/integrations
+        required: true
+        schema:
+          type: object
+          example:
+            configType: GITHUB
+            name: Java client SDK
+            token: abcd12345
+            owner: myOrg
+            repository: petstore
+            branch: develop
+            target: java
+            syncMethod: Advanced Sync
+            outputFolder: sdk/java
+            providedPaths:
+            - '*'
+            managedPaths: []
+            ignoredPaths: []
+            enabled: true
+      responses:
+        "200":
+          description: Integration was successfully updated
+        "400":
+          description: The specified integration configuration is invalid
+        "401":
+          description: The `Authorization` header is missing or contains an invalid API key
+        "403":
+          description: The authenticating user does not have access to integrations in this API
+        "404":
+          description: The specified combination of owner, API, version, integrationId, and configType was not found
+        "415":
+          description: Invalid content type
+      security:
+      - TokenSecured: []
+    delete:
+      tags:
+      - Integrations
+      summary: Delete an integration
+      description: Delete an existing integration specified by its ID.
+      operationId: deleteIntegration
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: integrationId
+        in: path
+        description: Integration ID (case-sensitive). To get the available integration IDs, use `GET /apis/{owner}/{api}/{version}/integrations`
+        required: true
+        type: string
+        format: uuid
+      responses:
+        "204":
+          description: The integration was successfully deleted
+        "401":
+          description: The `Authorization` header is missing or contains an invalid API key
+        "403":
+          description: The authenticating user does not have permissions to delete integrations from this API
+        "404":
+          description: The specified owner, API, version, or integration ID was not found
+      security:
+      - TokenSecured: []
+  /apis/{owner}/{api}/{version}/integrations/{integrationId}/execute:
+    post:
+      tags:
+      - Integrations
+      summary: Run an integration
+      description: |-
+        Use this operation to trigger an existing integration.
+
+        Source control integrations push to (not pull from) the configured repository and branch. You can optionally provide a custom commit message.
+
+        **Note:** Webhooks cannot be triggered by this operation, they are only triggered when an API is saved or published. An attempt to trigger a webhook will return status code 400.
+      operationId: executeIntegration
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      - name: version
+        in: path
+        description: Version identifier (case-sensitive)
+        required: true
+        type: string
+      - name: integrationId
+        in: path
+        description: Integration ID (case-sensitive). To get the available integration IDs, use `GET /apis/{owner}/{api}/{version}/integrations`
+        required: true
+        type: string
+        format: uuid
+      - name: commitMessage
+        in: query
+        description: Commit message for source control integrations
+        required: false
+        type: string
+      responses:
+        "200":
+          description: The integration was executed successfully
+        "400":
+          description: The integration encountered an error while executing. Check that the integration settings (such as access tokens) are valid.
+        "401":
+          description: The `Authorization` header is missing or contains an invalid API key
+        "403":
+          description: The authenticating user does not have access to integrations in this API
+        "404":
+          description: The specified API or integration ID was not found
       security:
       - TokenSecured: []
   /domains:
@@ -2182,7 +2592,7 @@ paths:
       tags:
       - Domains
       summary: Rename a domain
-      description: The new name must follow the [naming rules](https://app.swaggerhub.com/help/apis/creating-api).
+      description: The new name must follow the [naming rules](https://support.smartbear.com/swaggerhub/docs/apis/creating-api.html).
       operationId: renameDomain
       parameters:
       - name: owner
@@ -2212,7 +2622,7 @@ paths:
         "200":
           description: The domain was successfully renamed
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Access denied (insufficient user permissions)
         "409":
@@ -2345,7 +2755,7 @@ paths:
       tags:
       - Domains
       summary: Fork a domain
-      description: Creates a [fork](https://app.swaggerhub.com/help/apis/forking-api) of the specified domain definition and version. The fork can be created as a new domain, or as a new version in another existing domain.
+      description: Creates a [fork](https://support.smartbear.com/swaggerhub/docs/apis/forking-api.html) of the specified domain definition and version. The fork can be created as a new domain, or as a new version in another existing domain.
       operationId: forkDomain
       parameters:
       - name: owner
@@ -2375,7 +2785,7 @@ paths:
         "400":
           description: Some parameters are missing or invalid
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Access denied
         "404":
@@ -2412,7 +2822,7 @@ paths:
         type: string
       - in: body
         name: newVersion
-        description: An object that contains the new version number and other parameters. The version number must be in the format described in the [documentation](https://app.swaggerhub.com/help/apis/versioning#format).
+        description: An object that contains the new version number and other parameters. The version number must be in the format described in the [documentation](https://support.smartbear.com/swaggerhub/docs/apis/versioning.html#format).
         required: true
         schema:
           $ref: '#/definitions/NewVersion'
@@ -2527,7 +2937,7 @@ paths:
         "204":
           description: No comments were found for the specified domain version
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -2568,7 +2978,7 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -2608,7 +3018,7 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -2646,7 +3056,7 @@ paths:
         "200":
           description: Comment was deleted
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -2692,7 +3102,7 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -2740,7 +3150,7 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -2789,7 +3199,7 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -2832,7 +3242,7 @@ paths:
         "200":
           description: Comment reply was deleted
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -2883,7 +3293,7 @@ paths:
         "400":
           description: The request body was invalid
         "401":
-          description: Access token is not set or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
         "404":
@@ -2926,7 +3336,7 @@ paths:
         "204":
           description: No comments were found for the specified domain version
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Access denied (insufficient user permissions)
         "404":
@@ -2992,7 +3402,7 @@ paths:
         "200":
           description: The default version was successfully changed
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Access denied (insufficient user permissions)
         "404":
@@ -3027,7 +3437,7 @@ paths:
           schema:
             $ref: '#/definitions/LifecycleSettings'
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "404":
           description: The specified domain or version was not found
       security:
@@ -3071,7 +3481,7 @@ paths:
         "200":
           description: Successfully published or unpublished the domain
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Access denied (insufficient user permissions)
         "404":
@@ -3131,7 +3541,7 @@ paths:
           schema:
             $ref: '#/definitions/VisibilitySettings'
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "404":
           description: The specified domain or version was not found
       security:
@@ -3175,7 +3585,7 @@ paths:
         "200":
           description: Domain visibility was updated
         "401":
-          description: The access token is missing or invalid
+          description: The `Authorization` header is missing or contains an invalid API key
         "403":
           description: Access denied (insufficient user permissions)
         "404":
@@ -3269,9 +3679,9 @@ definitions:
         - type: X-Version
           value: "1.1"
         - type: X-Created
-          value: 2017-01-16T13:39:06.000+0000
+          value: 2017-01-16T13:39:06Z
         - type: X-Modified
-          value: 2017-01-25T11:48:13.000+0000
+          value: 2017-01-25T11:48:13Z
         - type: X-Published
           value: "true"
         - type: X-Versions
@@ -3541,13 +3951,13 @@ definitions:
       name:
         type: string
         example: api-fork
-        description: The name for the forked definition. Must follow the [naming rules](https://app.swaggerhub.com/help/apis/creating-api). Can be the name of an existing definition, in which case the fork will become a new version in that definition, unless that version already exists.
+        description: The name for the forked definition. Must follow the [naming rules](https://support.smartbear.com/swaggerhub/docs/apis/creating-api.html). Can be the name of an existing definition, in which case the fork will become a new version in that definition, unless that version already exists.
         minLength: 3
         maxLength: 60
       version:
         type: string
         example: 1.0.0
-        description: Version identifier for the forked definition. Must follow the [naming rules](https://app.swaggerhub.com/help/apis/versioning#format). If forking into an existing definition, this version must not already exist.
+        description: Version identifier for the forked definition. Must follow the [naming rules](https://support.smartbear.com/swaggerhub/docs/apis/versioning.html#format). If forking into an existing definition, this version must not already exist.
         minLength: 1
       project:
         type: string
@@ -3599,21 +4009,134 @@ definitions:
         enum:
         - CRITICAL
         - WARNING
-    description: Represents a [standardization](https://app.swaggerhub.com/help/organizations/api-standardization) error or warning
+    description: Represents a [standardization](https://support.smartbear.com/swaggerhub/docs/organizations/api-standardization.html) error or warning
   IntegrationConfiguration:
     type: object
     required:
     - name
     properties:
+      id:
+        type: string
+        format: uuid
+        description: ID of the integration
+        readOnly: true
       name:
         type: string
         example: Java client
         description: The display name of the integration. Must be unique among all integrations configured for the given API version.
       enabled:
         type: boolean
-        description: Whether the integration is enabled or disabled.
+        description: Whether the integration is enabled or disabled
         default: true
-    description: Common configuration details required to create an integration using the `POST /apis/{owner}/{api}/{version}/integrations` endpoint
+    description: Common configuration details for all integrations
+  IntegrationConfigurations:
+    type: object
+    properties:
+      integrations:
+        type: array
+        description: A list of integrations
+        items:
+          $ref: '#/definitions/IntegrationConfigurationSummary'
+  IntegrationConfigurationSummary:
+    allOf:
+    - $ref: '#/definitions/IntegrationConfiguration'
+    - type: object
+      required:
+      - configType
+      properties:
+        configType:
+          type: string
+          description: Integration type
+          enum:
+          - AMAZON_API_GATEWAY
+          - API_AUTO_MOCKING
+          - AZURE_DEVOPS_SERVICES
+          - BITBUCKET_CLOUD
+          - BITBUCKET_SERVER
+          - GITHUB
+          - GITHUB_ENTERPRISE
+          - GITLAB
+          - WEBHOOK
+  AmazonApiGatewayIntegration:
+    allOf:
+    - $ref: '#/definitions/IntegrationConfiguration'
+    - type: object
+      required:
+      - configType
+      - proxyToAddress
+      - region
+      properties:
+        configType:
+          type: string
+          description: Integration type
+          enum:
+          - AMAZON_API_GATEWAY
+        region:
+          type: string
+          description: AWS region where the API will be published
+          enum:
+          - us-east-1
+          - us-east-2
+          - us-west-1
+          - us-west-2
+          - eu-west-1
+          - eu-west-2
+          - eu-west-3
+          - eu-central-1
+          - eu-north-1
+          - ap-east-1
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ap-northeast-1
+          - ap-northeast-2
+          - sa-east-1
+          - cn-north-1
+          - cn-northwest-1
+          - ca-central-1
+          - me-south-1
+        apiId:
+          type: string
+          description: AWS ID of the API to update. Empty value will create a new API in AWS.
+        publishMode:
+          type: string
+          description: How to update an existing API in AWS
+          default: merge
+          enum:
+          - merge
+          - overwrite
+        basePathMode:
+          type: string
+          description: How to handle the API's `basePath` value. Refer to [AWS documentation](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-import-api-basePath.html) for details.
+          default: ignore
+          enum:
+          - ignore
+          - prepend
+          - split
+        updateDefinition:
+          type: boolean
+          description: Whether to update the API definition with Amazon-specific extensions and compatibility modifications
+          default: false
+        deploymentMode:
+          type: string
+          description: Should be "on save". The value "never" means the integration is disabled.
+          default: on save
+          enum:
+          - on save
+          - never
+        proxyToAddress:
+          type: string
+          example: https://api.example.com/v2
+          description: The URL of the backend endpoint to which API Gateway will proxy the requests
+        accessKey:
+          type: string
+          format: password
+          description: AWS access key. Write-only property. Required to create and update the integration.
+        secretKey:
+          type: string
+          format: password
+          description: AWS secret key. Write-only property. Required to create and update the integration.
+    description: Configuration details used to create an Amazon API Gateway integration.
   AutoMockingIntegration:
     allOf:
     - $ref: '#/definitions/IntegrationConfiguration'
@@ -3623,7 +4146,7 @@ definitions:
       properties:
         configType:
           type: string
-          description: Integration type.
+          description: Integration type
           enum:
           - API_AUTO_MOCKING
         defaultResponseType:
@@ -3641,7 +4164,7 @@ definitions:
           type: boolean
           description: Whether to update the `host`/`servers` in the API definition to point to the mock server. `modify`=`true` can only be used if the API is _unpublished_.
           default: true
-    description: Configuration details used to create an [API Auto Mocking](https://app.swaggerhub.com/help/integrations/api-auto-mocking) integration.
+    description: Configuration details for the [API Auto Mocking](https://support.smartbear.com/swaggerhub/docs/integrations/api-auto-mocking.html) integration
   WebhookIntegration:
     allOf:
     - $ref: '#/definitions/IntegrationConfiguration'
@@ -3653,23 +4176,23 @@ definitions:
       properties:
         configType:
           type: string
-          description: Integration type.
+          description: Integration type
           enum:
           - WEBHOOK
         url:
           type: string
           format: uri
           example: https://example.com:8443/swaggerhub-webhook
-          description: The URL to send the webhook to.
+          description: The URL to send the webhook to
         contentType:
           type: string
-          description: Webhook content type.
+          description: Webhook content type
           enum:
           - application/json
           - application/x-www-form-urlencoded
         lifeCycleEvents:
           type: array
-          description: Events that will trigger the webhook.
+          description: Events that will trigger the webhook
           items:
             type: string
             enum:
@@ -3681,7 +4204,7 @@ definitions:
           items:
             type: string
             example: 'Authorization: Bearer abcd12345'
-    description: Configuration details used to create a [webhook](https://app.swaggerhub.com/help/integrations/webhook).
+    description: Configuration details for [webhooks](https://support.smartbear.com/swaggerhub/docs/integrations/webhook.html)
   SCMIntegrationConfiguration:
     allOf:
     - $ref: '#/definitions/IntegrationConfiguration'
@@ -3701,11 +4224,11 @@ definitions:
         repository:
           type: string
           example: petstore
-          description: The repository to synchronize with.
+          description: The repository to synchronize with
         outputFile:
           type: string
           example: openapi.yaml
-          description: If `target` is "YAML (Resolved)", "YAML (Unresolved)", "JSON (Resolved)", or "JSON (Unresolved)", this is file name for the generated definition.
+          description: Required if `target` is "YAML (Resolved)", "YAML (Unresolved)", "JSON (Resolved)", or "JSON (Unresolved)". Specifies the file name for the generated definition.
         target:
           type: string
           example: java
@@ -3749,7 +4272,7 @@ definitions:
           description: "Fully Managed Paths: These files and folders will be completely managed by the integration. New files will be added, the existing files will be overwritten, and the files that are no longer used will be deleted. \nPaths are relative to the `outputFolder`. Use forward slashes `/` as folder separators, but do not add `/` at the beginning of the paths.\n`*` means all files in the `outputFolder`.\n"
           items:
             type: string
-    description: Common configuration details used to create source control integrations
+    description: Common configuration details for source control integrations
   AzureDevopsServicesIntegration:
     allOf:
     - $ref: '#/definitions/SCMIntegrationConfiguration'
@@ -3757,28 +4280,27 @@ definitions:
       required:
       - configType
       - organization
-      - personalAccessToken
       - project
       properties:
         configType:
           type: string
-          description: Integration type.
+          description: Integration type
           enum:
           - AZURE_DEVOPS_SERVICES
         organization:
           type: string
           example: my-org
-          description: The Azure DevOps organization that contains the target repository.
+          description: The Azure DevOps organization that contains the target repository
         personalAccessToken:
           type: string
           format: password
           description: |
-            A [personal access token](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=preview-page#create-a-pat) for accessing the target repository. The token must have the _Code > Read & write_ scope.
+            A [personal access token](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=preview-page#create-a-pat) for accessing the target repository. The token must have the _Code > Read & write_ scope. Write-only property. Required to create and update the integration.
         project:
           type: string
           example: Petstore 2.0
-          description: Team Project which contains the target repository.
-    description: Configuration details used to create an Azure DevOps Services integration
+          description: Team Project which contains the target repository
+    description: Configuration details for the Azure DevOps Services integration
   BitbucketCloudIntegration:
     allOf:
     - $ref: '#/definitions/SCMIntegrationConfiguration'
@@ -3786,30 +4308,30 @@ definitions:
       required:
       - configType
       - owner
-      - password
       - username
       properties:
         configType:
           type: string
-          description: Integration type.
+          description: Integration type
           enum:
           - BITBUCKET_CLOUD
         username:
           type: string
           example: service_user
-          description: Bitbucket username to authenticate with.
+          description: Bitbucket username to authenticate with
         password:
           type: string
           format: password
           description: |
-            Bitbucket [app password](https://support.atlassian.com/bitbucket-cloud/docs/app-passwords/) to authenticate with. This app password must correspond to the `username` account and have the following permissions:
+            Bitbucket [app password](https://support.atlassian.com/bitbucket-cloud/docs/app-passwords/) to authenticate with. Write-only property. Required to create and update the integration.
+            This app password must correspond to the `username` account and have the following permissions:
 
              * Account: Email, Read
              * Repositories: Read, Write
         owner:
           type: string
-          description: The owner of the Bitbucket repository to synchronize with.
-    description: Configuration details used to create a Bitbucket Cloud integration
+          description: The owner of the Bitbucket repository to synchronize with
+    description: Configuration details for the Bitbucket Cloud integration
   BitbucketServerIntegration:
     allOf:
     - $ref: '#/definitions/SCMIntegrationConfiguration'
@@ -3818,12 +4340,11 @@ definitions:
       - configType
       - host
       - owner
-      - password
       - username
       properties:
         configType:
           type: string
-          description: Integration type.
+          description: Integration type
           enum:
           - BITBUCKET_SERVER
         host:
@@ -3833,16 +4354,18 @@ definitions:
         username:
           type: string
           example: service_user
-          description: Bitbucket username to authenticate with.
+          description: Bitbucket username to authenticate with
         password:
           type: string
           format: password
-          description: 'A [personal access token](https://app.swaggerhub.com/help/integrations/bitbucket-server-sync#token) for accessing the target Bitbucket Server repository. This token must have permissions for _Projects: Read_ and _Repositories: Write_.'
+          description: |-
+            A [personal access token](https://support.smartbear.com/swaggerhub/docs/integrations/bitbucket-server-sync.html#token) for accessing the target Bitbucket Server repository. This token must have permissions for _Projects: Read_ and _Repositories: Write_.
+            Write-only property. Required to create and update the integration.
         owner:
           type: string
           example: myOrg
-          description: The owner of the repository to synchronize with.
-    description: Configuration details used to create a Bitbucket Server integration
+          description: The owner of the repository to synchronize with
+    description: Configuration details for the Bitbucket Server integration
   GitHubIntegration:
     allOf:
     - $ref: '#/definitions/SCMIntegrationConfiguration'
@@ -3850,23 +4373,23 @@ definitions:
       required:
       - configType
       - owner
-      - token
       properties:
         configType:
           type: string
-          description: Integration type.
+          description: Integration type
           enum:
           - GITHUB
         token:
           type: string
           format: password
           description: |
-            A personal access token for accessing the target GitHub repository. You can generate tokens here: https://github.com/settings/tokens. The token must have the _public_repo_ scope if the target repository is public, or the _repo_ scope if it is private.
+            A personal access token for accessing the target GitHub repository. You can generate tokens here: https://github.com/settings/tokens. Write-only property. Required to create and update the integration.
+            The token must have the _public_repo_ scope if the target repository is public, or the _repo_ scope if it is private.
         owner:
           type: string
           example: myOrg
-          description: The owner of the GitHub repository to synchronize with.
-    description: Configuration details used to create a GitHub.com integration
+          description: The owner of the GitHub repository to synchronize with
+    description: Configuration details for the GitHub.com integration
   GitHubEnterpriseIntegration:
     allOf:
     - $ref: '#/definitions/SCMIntegrationConfiguration'
@@ -3875,11 +4398,10 @@ definitions:
       - configType
       - host
       - owner
-      - token
       properties:
         configType:
           type: string
-          description: Integration type.
+          description: Integration type
           enum:
           - GITHUB_ENTERPRISE
         host:
@@ -3890,12 +4412,13 @@ definitions:
           type: string
           format: password
           description: |
-            A [personal access token](https://docs.github.com/en/enterprise/user/github/authenticating-to-github/creating-a-personal-access-token) for accessing the target repository. The token must have the _public_repo_ scope if the target repository is public, or the _repo_ scope if it is private.
+            A [personal access token](https://docs.github.com/en/enterprise/user/github/authenticating-to-github/creating-a-personal-access-token) for accessing the target repository. Write-only property. Required to create and update the integration.
+            The token must have the _public_repo_ scope if the target repository is public, or the _repo_ scope if it is private.
         owner:
           type: string
           example: myOrg
-          description: The owner of the repository to synchronize with.
-    description: Configuration details used to create a GitHub Enterprise integration
+          description: The owner of the repository to synchronize with
+    description: Configuration details for the GitHub Enterprise integration
   GitLabIntegration:
     allOf:
     - $ref: '#/definitions/SCMIntegrationConfiguration'
@@ -3903,11 +4426,10 @@ definitions:
       required:
       - configType
       - owner
-      - personalAccessToken
       properties:
         configType:
           type: string
-          description: Integration type.
+          description: Integration type
           enum:
           - GITLAB
         host:
@@ -3919,11 +4441,12 @@ definitions:
           format: password
           description: |
             A personal access token for accessing the target repository. The token must have the _api_ scope.
+            Write-only property. Required to create and update the integration.
         owner:
           type: string
           example: myOrg
-          description: The owner of the repository to synchronize with.
-    description: Configuration details used to create a GitLab integration
+          description: The owner of the repository to synchronize with
+    description: Configuration details for the GitLab integration
   Project:
     type: object
     properties:
@@ -4161,7 +4684,7 @@ parameters:
   newVersion:
     in: body
     name: newVersion
-    description: An object that contains the new version number and other parameters. The version number must be in the format described in the [documentation](https://app.swaggerhub.com/help/apis/versioning#format).
+    description: An object that contains the new version number and other parameters. The version number must be in the format described in the [documentation](https://support.smartbear.com/swaggerhub/docs/apis/versioning.html#format).
     required: true
     schema:
       $ref: '#/definitions/NewVersion'
@@ -4219,12 +4742,63 @@ parameters:
     description: Return the project information excluding APIs and domains
     required: false
     type: boolean
-    default: false
+    default: false - DELETE
+  integrationId:
+    name: integrationId
+    in: path
+    description: Integration ID (case-sensitive). To get the available integration IDs, use `GET /apis/{owner}/{api}/{version}/integrations`
+    required: true
+    type: string
+    format: uuid
+  integrationTypeConfiguration:
+    in: body
+    name: integrationTypeConfiguration
+    description: |-
+      Can be one of the following objects:
+
+      | `configType` value    | Object |
+      | --------------------- | ------ |
+      | AMAZON_API_GATEWAY    | AmazonApiGatewayIntegration |
+      | API_AUTO_MOCKING      | AutoMockingIntegration |
+      | AZURE_DEVOPS_SERVICES | AzureDevopsServicesIntegration |
+      | BITBUCKET_CLOUD       | BitbucketCloudIntegration |
+      | BITBUCKET_SERVER      | BitbucketServerIntegration |
+      | GITHUB                | GitHubIntegration |
+      | GITHUB_ENTERPRISE     | GitHubEnterpriseIntegration |
+      | GITLAB                | GitLabIntegration |
+      | WEBHOOK               | WebhookIntegration |
+
+      For more examples, see the JSON files in this repository:
+      https://github.com/SmartBear/swaggerhub-cli/tree/master/examples/integrations
+    required: true
+    schema:
+      type: object
+      example:
+        configType: GITHUB
+        name: Java client SDK
+        token: abcd12345
+        owner: myOrg
+        repository: petstore
+        branch: develop
+        target: java
+        syncMethod: Advanced Sync
+        outputFolder: sdk/java
+        providedPaths:
+        - '*'
+        managedPaths: []
+        ignoredPaths: []
+        enabled: true
+  commitMessage:
+    name: commitMessage
+    in: query
+    description: Commit message for source control integrations
+    required: false
+    type: string
 responses:
   BadRequest:
     description: The request body was invalid
   Unauthorized:
-    description: Access token is not set or invalid
+    description: The `Authorization` header is missing or contains an invalid API key
   ApiNotFound:
     description: The specified API was not found
   DomainNotFound:
@@ -4239,3 +4813,5 @@ responses:
     description: The specified domain, comment, or reply was not found
   CommentForbidden:
     description: The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action.
+  IntegrationForbidden:
+    description: The authenticating user does not have access to integrations in this API
