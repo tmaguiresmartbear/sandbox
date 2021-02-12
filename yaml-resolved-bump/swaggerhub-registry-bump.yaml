@@ -381,6 +381,33 @@ paths:
           description: Invalid content type
       security:
       - TokenSecured: []
+    delete:
+      tags:
+      - APIs
+      summary: Delete an API
+      operationId: deleteApi
+      parameters:
+      - name: owner
+        in: path
+        description: API owner (user or organization, case-sensitive)
+        required: true
+        type: string
+      - name: api
+        in: path
+        description: API name (case-sensitive)
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The API was successfully deleted
+        "403":
+          description: Access denied
+        "404":
+          description: The specified API not found
+        "409":
+          description: The API has published versions and cannot be deleted
+      security:
+      - TokenSecured: []
   /apis/{owner}/{api}/rename:
     post:
       tags:
