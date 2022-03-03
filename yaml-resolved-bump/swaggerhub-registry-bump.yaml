@@ -3,7 +3,7 @@ swagger: "2.0"
 info:
   description: "# Introduction\n Change this in front of SE team.  \n\nThis is the registry API for SwaggerHub. It allows you to access, manage, and update your APIs and Domains in SwaggerHub bypassing the web interface.\n# Authentication\nUse your personal API Key: you can find it by visiting the [API Key page](https://app.swaggerhub.com/settings/apiKey).\n# Tools\nIn addition to calling the Registry API directly, you can use these tools to interact with the API from the command line or CI/CD pipeline:\n\n * [SwaggerHub CLI](https://www.npmjs.com/package/swaggerhub-cli) \n * [Maven plugin](https://github.com/swagger-api/swaggerhub-maven-plugin)\n * [Gradle plugin](https://github.com/swagger-api/swaggerhub-gradle-plugin)\n"
   version: 1.0.59
-  title: SwaggerHub Registry API change here
+  title: SwaggerHub Registry API change new title
   contact:
     name: SwaggerHub
     url: https://swaggerhub.com
@@ -123,14 +123,14 @@ paths:
         enum:
         - ASC
         - DESC
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: A list of APIs and domains in APIs.json format
           schema:
             $ref: '#/definitions/ApisJson'
-      security:
-      - TokenSecured: []
-      - {}
   /apis:
     get:
       tags:
@@ -198,15 +198,15 @@ paths:
         enum:
         - ASC
         - DESC
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "303":
           description: "Redirect to `GET /specs`, with all query parameters preserved"
           headers:
             Location:
               type: string
-      security:
-      - TokenSecured: []
-      - {}
   /apis/{owner}:
     get:
       tags:
@@ -263,14 +263,14 @@ paths:
         enum:
         - ASC
         - DESC
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: A list of APIs in APIs.json format
           schema:
             $ref: '#/definitions/ApisJson'
-      security:
-      - TokenSecured: []
-      - {}
   /apis/{owner}/{api}:
     get:
       tags:
@@ -288,14 +288,14 @@ paths:
         description: API name (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: A list of API versions in APIs.json format
           schema:
             $ref: '#/definitions/ApisJson'
-      security:
-      - TokenSecured: []
-      - {}
     post:
       tags:
       - APIs
@@ -339,6 +339,8 @@ paths:
         description: Force update
         required: false
         type: boolean
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Existing API version was successfully updated
@@ -358,8 +360,6 @@ paths:
           description: Cannot overwrite a published API version
         "415":
           description: Invalid content type
-      security:
-      - TokenSecured: []
     delete:
       tags:
       - APIs
@@ -376,6 +376,8 @@ paths:
         description: API name (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The API was successfully deleted
@@ -385,8 +387,6 @@ paths:
           description: The specified API not found
         "409":
           description: The API has published versions and cannot be deleted
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/rename:
     post:
       tags:
@@ -412,6 +412,8 @@ paths:
         type: string
         maxLength: 60
         minLength: 3
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The API was successfully renamed
@@ -423,8 +425,6 @@ paths:
           description: The specified owner or API was not found
         "409":
           description: "An API or domain with the new name already exists, or the new and old names are the same"
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/.collaboration:
     get:
       tags:
@@ -447,13 +447,13 @@ paths:
         required: false
         type: boolean
         default: false
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The existing collaborators on an API
           schema:
             $ref: '#/definitions/Collaboration'
-      security:
-      - TokenSecured: []
     put:
       tags:
       - APIs
@@ -475,11 +475,11 @@ paths:
         required: false
         schema:
           $ref: '#/definitions/Collaboration'
+      security:
+      - TokenSecured: []
       responses:
         default:
           description: Successfully updated API collaborators
-      security:
-      - TokenSecured: []
     delete:
       tags:
       - APIs
@@ -496,11 +496,11 @@ paths:
         description: API name (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         default:
           description: Successfully deleted collaborators
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}:
     get:
       tags:
@@ -538,6 +538,9 @@ paths:
         required: false
         type: boolean
         default: false
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: OpenAPI definition in the requested format (YAML or JSON)
@@ -557,9 +560,6 @@ paths:
               message: "Cannot resolve invalid API definition, please fix any syntax issues."
         "404":
           description: The specified API or version was not found
-      security:
-      - TokenSecured: []
-      - {}
     delete:
       tags:
       - APIs
@@ -581,6 +581,8 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The API version was successfully deleted
@@ -590,8 +592,6 @@ paths:
           description: The specified API was not found
         "409":
           description: The API version is published and cannot be deleted or it is the only version of this API
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/fork:
     post:
       tags:
@@ -621,6 +621,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ForkVersion'
+      security:
+      - TokenSecured: []
       responses:
         "201":
           description: The API was successfully forked
@@ -634,8 +636,6 @@ paths:
           description: The specified owner or API was not found
         "409":
           description: An API with the name and version you're trying to create already exists
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/clone:
     post:
       tags:
@@ -665,6 +665,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/NewVersion'
+      security:
+      - TokenSecured: []
       responses:
         "201":
           description: New API version was successfully created
@@ -676,8 +678,6 @@ paths:
           description: The specified API or version was not found
         "409":
           description: The API version you are trying to create already exists
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/swagger.json:
     get:
       tags:
@@ -712,6 +712,9 @@ paths:
         required: false
         type: boolean
         default: false
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: OpenAPI definition in JSON format
@@ -731,9 +734,6 @@ paths:
               message: "Cannot resolve invalid API definition, please fix any syntax issues."
         "404":
           description: The specified API or version was not found
-      security:
-      - TokenSecured: []
-      - {}
   /apis/{owner}/{api}/{version}/swagger.yaml:
     get:
       tags:
@@ -770,6 +770,9 @@ paths:
         required: false
         type: boolean
         default: false
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: OpenAPI definition in YAML format
@@ -785,9 +788,6 @@ paths:
               message: "Cannot resolve invalid API definition, please fix any syntax issues."
         "404":
           description: The specified API or version was not found
-      security:
-      - TokenSecured: []
-      - {}
   /apis/{owner}/{api}/{version}/comments:
     get:
       tags:
@@ -810,6 +810,8 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comments for the specified API
@@ -825,8 +827,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified API was not found
-      security:
-      - TokenSecured: []
     post:
       tags:
       - APIs
@@ -853,6 +853,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/NewComment'
+      security:
+      - TokenSecured: []
       responses:
         "201":
           description: Newly created comment for the specified API
@@ -866,8 +868,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified API was not found
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/comments/batch:
     post:
       tags:
@@ -895,6 +895,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/CommentsBatch'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comments were updated
@@ -906,8 +908,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: "The specified API, comment, or reply was not found"
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/comments/{comment}:
     delete:
       tags:
@@ -935,6 +935,8 @@ paths:
         description: Comment identifier
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comment was deleted
@@ -944,8 +946,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified API or comment was not found
-      security:
-      - TokenSecured: []
     patch:
       tags:
       - APIs
@@ -977,6 +977,8 @@ paths:
         required: false
         schema:
           $ref: '#/definitions/ClosableCommentPatch'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comment was updated
@@ -990,8 +992,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified API or comment was not found
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/comments/{comment}/status/{status}:
     put:
       tags:
@@ -1027,6 +1027,8 @@ paths:
         enum:
         - OPEN
         - RESOLVED
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comment status was updated
@@ -1038,8 +1040,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified API or comment was not found
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/comments/{comment}/replies:
     post:
       tags:
@@ -1072,6 +1072,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/NewReply'
+      security:
+      - TokenSecured: []
       responses:
         "201":
           description: Newly created reply
@@ -1087,8 +1089,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified API or comment was not found
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/comments/{comment}/replies/{reply}:
     delete:
       tags:
@@ -1121,6 +1121,8 @@ paths:
         description: Reply identifier
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Сomment reply was deleted
@@ -1130,8 +1132,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: "The specified API, comment, or reply was not found"
-      security:
-      - TokenSecured: []
     patch:
       tags:
       - APIs
@@ -1168,6 +1168,8 @@ paths:
         required: false
         schema:
           $ref: '#/definitions/CommentPatch'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Сomment reply was updated
@@ -1181,8 +1183,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: "The specified API, comment, or reply was not found"
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/settings/default:
     get:
       tags:
@@ -1203,6 +1203,9 @@ paths:
         description: API name (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: The default version identifier for this API
@@ -1210,9 +1213,6 @@ paths:
             $ref: '#/definitions/DefaultVersion'
         "404":
           description: "The specified API was not found. If it is private, make sure the request is authenticated."
-      security:
-      - TokenSecured: []
-      - {}
     put:
       tags:
       - APIs
@@ -1237,6 +1237,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/DefaultVersion'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The default version was successfully changed
@@ -1246,8 +1248,6 @@ paths:
           description: Access denied (insufficient user permissions)
         "404":
           description: The specified API or version was not found
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/settings/lifecycle:
     get:
       tags:
@@ -1270,6 +1270,8 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The published status of this API version
@@ -1279,8 +1281,6 @@ paths:
           description: The access token is missing or invalid
         "404":
           description: The specified API or version was not found
-      security:
-      - TokenSecured: []
     put:
       tags:
       - APIs
@@ -1316,6 +1316,8 @@ paths:
         required: false
         type: boolean
         default: false
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Successfully published or unpublished the API
@@ -1349,8 +1351,6 @@ paths:
                   type: DOMAIN
                   published: false
                   private: false
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/settings/private:
     get:
       tags:
@@ -1373,6 +1373,8 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The response body indicates whether this API version is private (`true`) or public (`false`)
@@ -1382,8 +1384,6 @@ paths:
           description: The access token is missing or invalid
         "404":
           description: The specified API or version was not found
-      security:
-      - TokenSecured: []
     put:
       tags:
       - APIs
@@ -1413,6 +1413,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/VisibilitySettings'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: API visibility was updated
@@ -1422,8 +1424,6 @@ paths:
           description: Access denied (insufficient user permissions)
         "404":
           description: The specified API or version was not found
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/validation:
     get:
       tags:
@@ -1449,6 +1449,8 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: "An object that contains a list of standardization errors and warnings found in the specified API version. Error information includes line numbers, severity (error or warning), and error messages.\nIf no standardization errors or warnings are found, an empty validation array is returned."
@@ -1458,8 +1460,6 @@ paths:
           description: "The specified API or version was not found, or standardization is not enabled for this organization."
         "403":
           description: Access denied
-      security:
-      - TokenSecured: []
   /projects/{owner}:
     get:
       tags:
@@ -1504,6 +1504,8 @@ paths:
         enum:
         - ASC
         - DESC
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Project belonging to the specified organization
@@ -1513,8 +1515,6 @@ paths:
           description: Projects are not available in the organization's plan
         "404":
           description: The specified organization was not found
-      security:
-      - TokenSecured: []
     post:
       tags:
       - Projects
@@ -1533,6 +1533,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/Project'
+      security:
+      - TokenSecured: []
       responses:
         "201":
           description: The project has been created successfully
@@ -1549,8 +1551,6 @@ paths:
           description: The specified organization was not found
         "409":
           description: A project with this name already exists in the organization
-      security:
-      - TokenSecured: []
   /projects/{owner}/{projectId}:
     get:
       tags:
@@ -1570,6 +1570,8 @@ paths:
         description: Project name (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Project information
@@ -1581,8 +1583,6 @@ paths:
           description: "Projects are not available in the organization's plan, or you are not a member of the specified project\n"
         "404":
           description: The specified organization or project name was not found
-      security:
-      - TokenSecured: []
     put:
       tags:
       - Projects
@@ -1607,6 +1607,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/Project'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The project has been updated successfully
@@ -1621,8 +1623,6 @@ paths:
           description: "Projects are not available in the organization's plan, or you are not a member of the specified project\n"
         "404":
           description: The specified organization or project name was not found
-      security:
-      - TokenSecured: []
     delete:
       tags:
       - Projects
@@ -1639,6 +1639,8 @@ paths:
         description: Project name (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "204":
           description: The project has been deleted successfully
@@ -1648,8 +1650,6 @@ paths:
           description: "Projects are not available in the organization's plan, or you are not a member of the specified project."
         "404":
           description: The specified organization or project name was not found
-      security:
-      - TokenSecured: []
   /projects/{owner}/{projectId}/{specType}/{name}:
     put:
       tags:
@@ -1681,6 +1681,8 @@ paths:
         description: The name of an API or domain that you want to add to the project. Case-sensitive.
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The specified API or domain was successfully added to the project
@@ -1692,8 +1694,6 @@ paths:
           description: The specified organization or project name was not found
         "409":
           description: The project already contains this API or domain
-      security:
-      - TokenSecured: []
   /projects/{owner}/{projectId}/members:
     get:
       tags:
@@ -1713,6 +1713,8 @@ paths:
         description: Project name (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: A list of project members (users and teams)
@@ -1724,8 +1726,6 @@ paths:
           description: "Projects are not available in the organization's plan, or you are not a member of the specified project.\n"
         "404":
           description: The specified organization or project name was not found
-      security:
-      - TokenSecured: []
     put:
       tags:
       - Projects
@@ -1751,6 +1751,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ProjectMemberList'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The project members list has been updated successfully
@@ -1758,8 +1760,6 @@ paths:
           description: "Projects are not available in the organization's plan, or you are not a member of the specified project.\n"
         "404":
           description: The specified organization or project name was not found
-      security:
-      - TokenSecured: []
   /apis/{owner}/{api}/{version}/integrations:
     post:
       tags:
@@ -1808,6 +1808,8 @@ paths:
             managedPaths: []
             ignoredPaths: []
             enabled: true
+      security:
+      - TokenSecured: []
       responses:
         "201":
           description: The integration was successfully created
@@ -1823,8 +1825,6 @@ paths:
           description: An integration with this name already exists in this API
         "415":
           description: Invalid content type
-      security:
-      - TokenSecured: []
   /domains:
     get:
       tags:
@@ -1892,15 +1892,15 @@ paths:
         enum:
         - ASC
         - DESC
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "303":
           description: "Redirect to `GET /specs`, with all query parameters preserved"
           headers:
             Location:
               type: string
-      security:
-      - TokenSecured: []
-      - {}
   /domains/{owner}:
     get:
       tags:
@@ -1957,14 +1957,14 @@ paths:
         enum:
         - ASC
         - DESC
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: A list of domains in APIs.json format
           schema:
             $ref: '#/definitions/ApisJson'
-      security:
-      - TokenSecured: []
-      - {}
   /domains/{owner}/{domain}:
     get:
       tags:
@@ -1982,14 +1982,14 @@ paths:
         description: Domain name (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: A list of domain versions in APIs.json format
           schema:
             $ref: '#/definitions/ApisJson'
-      security:
-      - TokenSecured: []
-      - {}
     post:
       tags:
       - Domains
@@ -2031,6 +2031,8 @@ paths:
         description: Force update
         required: false
         type: boolean
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The domain was successfully saved
@@ -2044,8 +2046,6 @@ paths:
           description: Cannot overwrite a published domain version
         "415":
           description: Invalid content type
-      security:
-      - TokenSecured: []
     delete:
       tags:
       - Domains
@@ -2068,6 +2068,8 @@ paths:
         required: false
         type: boolean
         default: false
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The domain was successfully deleted
@@ -2097,8 +2099,6 @@ paths:
                   versionId: 1.0.2
                   type: DOMAIN
                   private: false
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/rename:
     post:
       tags:
@@ -2130,6 +2130,8 @@ paths:
         required: false
         type: boolean
         default: false
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The domain was successfully renamed
@@ -2161,8 +2163,6 @@ paths:
                   private: false
           schema:
             type: object
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}:
     get:
       tags:
@@ -2188,6 +2188,9 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: OpenAPI definition of a domain in the requested format (YAML or JSON)
@@ -2195,9 +2198,6 @@ paths:
             type: object
         "404":
           description: The specified domain or version was not found
-      security:
-      - TokenSecured: []
-      - {}
     delete:
       tags:
       - Domains
@@ -2225,6 +2225,8 @@ paths:
         required: false
         type: boolean
         default: false
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The domain version was successfully deleted
@@ -2254,8 +2256,6 @@ paths:
                   versionId: 1.0.2
                   type: DOMAIN
                   private: false
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}/fork:
     post:
       tags:
@@ -2285,6 +2285,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ForkVersion'
+      security:
+      - TokenSecured: []
       responses:
         "201":
           description: The domain was successfully forked
@@ -2298,8 +2300,6 @@ paths:
           description: The specified owner or domain was not found
         "409":
           description: A domain with the name and version you're trying to create already exists
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}/clone:
     post:
       tags:
@@ -2332,6 +2332,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/NewVersion'
+      security:
+      - TokenSecured: []
       responses:
         "201":
           description: New domain version was successfully created
@@ -2343,8 +2345,6 @@ paths:
           description: The specified domain or version was not found
         "409":
           description: The domain version you are trying to create already exists
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}/domain.json:
     get:
       tags:
@@ -2367,6 +2367,9 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: Domain definition in JSON format
@@ -2374,9 +2377,6 @@ paths:
             type: object
         "404":
           description: The specified domain or version was not found
-      security:
-      - TokenSecured: []
-      - {}
   /domains/{owner}/{domain}/{version}/domain.yaml:
     get:
       tags:
@@ -2401,6 +2401,9 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: Domain definition in YAML format
@@ -2408,9 +2411,6 @@ paths:
             type: object
         "404":
           description: The specified domain or version was not found
-      security:
-      - TokenSecured: []
-      - {}
   /domains/{owner}/{domain}/{version}/comments:
     get:
       tags:
@@ -2433,6 +2433,8 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comments for the specified domain version
@@ -2448,8 +2450,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified domain was not found
-      security:
-      - TokenSecured: []
     post:
       tags:
       - Domains
@@ -2476,6 +2476,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/NewComment'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Newly created comment for the specified domain
@@ -2489,8 +2491,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified domain was not found
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}/comments/batch:
     post:
       tags:
@@ -2518,6 +2518,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/CommentsBatch'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comments were updated
@@ -2529,8 +2531,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: "The specified domain, comment, or reply was not found"
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}/comments/{comment}:
     delete:
       tags:
@@ -2558,6 +2558,8 @@ paths:
         description: Comment identifier
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comment was deleted
@@ -2567,8 +2569,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified domain or comment was not found
-      security:
-      - TokenSecured: []
     patch:
       tags:
       - Domains
@@ -2600,6 +2600,8 @@ paths:
         required: false
         schema:
           $ref: '#/definitions/ClosableCommentPatch'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comment was updated
@@ -2613,8 +2615,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified domain or comment was not found
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}/comments/{comment}/status/{status}:
     put:
       tags:
@@ -2650,6 +2650,8 @@ paths:
         enum:
         - OPEN
         - RESOLVED
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comment status was updated
@@ -2661,8 +2663,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified domain or comment was not found
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}/comments/{comment}/replies:
     post:
       tags:
@@ -2695,6 +2695,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/NewReply'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Newly created reply
@@ -2710,8 +2712,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: The specified domain or comment was not found
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}/comments/{comment}/replies/{reply}:
     delete:
       tags:
@@ -2744,6 +2744,8 @@ paths:
         description: Reply identifier
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comment reply was deleted
@@ -2753,8 +2755,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: "The specified domain, comment, or reply was not found"
-      security:
-      - TokenSecured: []
     patch:
       tags:
       - Domains
@@ -2791,6 +2791,8 @@ paths:
         required: false
         schema:
           $ref: '#/definitions/CommentPatch'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Comment reply was updated
@@ -2804,8 +2806,6 @@ paths:
           description: "The comment feature is not available for the organization's plan, or the authenticating user does not have permission to complete this action."
         "404":
           description: "The specified domain, comment, or reply was not found"
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}/.comment:
     get:
       tags:
@@ -2829,6 +2829,9 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
+      deprecated: true
       responses:
         "200":
           description: Comments for the specified domain
@@ -2844,9 +2847,6 @@ paths:
           description: Access denied (insufficient user permissions)
         "404":
           description: The specified domain or version was not found
-      security:
-      - TokenSecured: []
-      deprecated: true
   /domains/{owner}/{domain}/settings/default:
     get:
       tags:
@@ -2867,6 +2867,9 @@ paths:
         description: Domain name (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
+      - {}
       responses:
         "200":
           description: The default version identifier for this domain
@@ -2874,9 +2877,6 @@ paths:
             $ref: '#/definitions/DefaultVersion'
         "404":
           description: "The specified API was not found. If it is private, make sure the request is authenticated."
-      security:
-      - TokenSecured: []
-      - {}
     put:
       tags:
       - Domains
@@ -2901,6 +2901,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/DefaultVersion'
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The default version was successfully changed
@@ -2910,8 +2912,6 @@ paths:
           description: Access denied (insufficient user permissions)
         "404":
           description: The specified domain or version was not found
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}/settings/lifecycle:
     get:
       tags:
@@ -2934,6 +2934,8 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The published status of this domain version
@@ -2943,8 +2945,6 @@ paths:
           description: The access token is missing or invalid
         "404":
           description: The specified domain or version was not found
-      security:
-      - TokenSecured: []
     put:
       tags:
       - Domains
@@ -2980,6 +2980,8 @@ paths:
         required: false
         type: boolean
         default: false
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Successfully published or unpublished the domain
@@ -3011,8 +3013,6 @@ paths:
                   type: DOMAIN
                   published: false
                   private: false
-      security:
-      - TokenSecured: []
   /domains/{owner}/{domain}/{version}/settings/private:
     get:
       tags:
@@ -3035,6 +3035,8 @@ paths:
         description: Version identifier (case-sensitive)
         required: true
         type: string
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: The response body indicates whether this domain version is private (`true`) or public (`false`)
@@ -3044,8 +3046,6 @@ paths:
           description: The access token is missing or invalid
         "404":
           description: The specified domain or version was not found
-      security:
-      - TokenSecured: []
     put:
       tags:
       - Domains
@@ -3081,6 +3081,8 @@ paths:
         required: false
         type: boolean
         default: false
+      security:
+      - TokenSecured: []
       responses:
         "200":
           description: Domain visibility was updated
@@ -3110,8 +3112,6 @@ paths:
                   versionId: 1.0.2
                   type: DOMAIN
                   private: false
-      security:
-      - TokenSecured: []
 securityDefinitions:
   TokenSecured:
     description: Specify your SwaggerHub API key found in https://app.swaggerhub.com/settings/apiKey.
@@ -3538,11 +3538,11 @@ definitions:
         defaultResponseType:
           type: string
           description: Response content type that the mock server will return if no `Accept` header is specified.
-          default: application/json
           enum:
           - application/json
           - application/xml
           - application/yaml
+          default: application/json
         token:
           type: string
           description: (For private APIs only.) An arbitrary bearer token that the users will need to send in requests to the mock server.
@@ -3882,10 +3882,10 @@ definitions:
         type: string
       type:
         type: string
-        default: USER
         enum:
         - USER
         - TEAM
+        default: USER
       roles:
         type: array
         readOnly: true
